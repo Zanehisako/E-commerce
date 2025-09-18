@@ -40,7 +40,7 @@ export default function Banner() {
       if (data) {
         fr.readAsDataURL(data)
         fr.onload = () => {
-          setImages([...images, fr.result as string])
+          setImages((prev) => [...prev, fr.result as string])
         }
       }
     })
