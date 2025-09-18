@@ -19,7 +19,7 @@ const styles = StyleSheet.create((
     itemCard: {
       position: "relative", height: "100%"
     },
-    image: { backgroundColor: "#EFF1F3", borderRadius: 20, height: 170, width: 170, },
+    image: { backgroundColor: "#EFF1F3", alignSelf: "center", borderRadius: 20, height: 170, width: 170, },
     nameText: { fontSize: 16, fontWeight: "bold", alignSelf: "center" },
     priceText: { fontSize: 14, fontWeight: "normal", alignSelf: "center" }
   }

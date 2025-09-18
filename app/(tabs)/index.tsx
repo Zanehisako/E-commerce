@@ -5,6 +5,7 @@ import supabase from '../supabaseClient';
 import ItemCard from '@/components/ItemCard';
 import Phone from '@/types/phone';
 import CategoryCards from '@/components/CategoriesCards';
+import { LegendList } from "@legendapp/list"
 
 export default function HomeScreen() {
   const [phones, setPhones] = useState<Phone[]>()
@@ -44,14 +45,18 @@ export default function HomeScreen() {
       <SearchBar />
       <Text style={styles.categories}>Categories</Text>
       <CategoryCards></CategoryCards>
-      <ScrollView contentContainerStyle={{ gap: 10 }} style={styles.imagesHorizontallScroll} horizontal={true}>
-        {phones !== undefined && (
-          phones.map((phone, i) => {
-            return <ItemCard key={i} phone={phone}></ItemCard>
-          })
-        )
-        }
-      </ScrollView>
+      {phones !== undefined && (
+        <LegendList
+          data={phones}
+          renderItem={({ item }) => <ItemCard phone={item} />}
+          keyExtractor={(item) => `${item.id}`}
+          recycleItems
+          numColumns={2}
+          //style={styles.imagesHorizontallScroll}
+          contentContainerStyle={{ gap: 20 }}
+        ></LegendList>
+      )
+      }
     </ScrollView >
   );
 }
@@ -67,12 +72,6 @@ const styles = StyleSheet.create({
     paddingTop: 70,
     gap: 20,
     backgroundColor: "white"
-  },
-  imagesHorizontallScroll: {
-    flex: 1,
-    flexDirection: "row",
-    width: "100%",
-    height: "100%",
   },
   categories: {
     fontSize: 20,
