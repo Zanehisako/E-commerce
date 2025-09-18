@@ -6,6 +6,7 @@ import ItemCard from '@/components/ItemCard';
 import Phone from '@/types/phone';
 import CategoryCards from '@/components/CategoriesCards';
 import { LegendList } from "@legendapp/list"
+import Banner from '@/components/Banner';
 
 export default function HomeScreen() {
   const [phones, setPhones] = useState<Phone[]>()
@@ -13,13 +14,13 @@ export default function HomeScreen() {
   async function getPhones() {
 
     try {
-      console.log('Getting Phones...',)
+      //console.log('Getting Phones...',)
 
       const { data, error } = await supabase.from('phones').select()
 
       if (error) { console.log("error:", error); throw error }
 
-      console.log('data:', data)
+      //console.log('data:', data)
 
       const phones = data?.map((object) => {
         return object as Phone
@@ -37,12 +38,13 @@ export default function HomeScreen() {
   }, [])
 
   useEffect(() => {
-    console.log("phones", phones)
+    //console.log("phones", phones)
   }, [phones])
 
   return (
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <SearchBar />
+      <Banner />
       <Text style={styles.categories}>Categories</Text>
       <CategoryCards></CategoryCards>
       {phones !== undefined && (
