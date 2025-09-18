@@ -42,7 +42,7 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <SearchBar />
       <Text style={styles.categories}>Categories</Text>
-      <ScrollView contentContainerStyle={{ gap: 20 }} style={styles.imagesHorizontallScroll} horizontal={true}>
+      <ScrollView contentContainerStyle={{ gap: 10 }} style={styles.imagesHorizontallScroll} horizontal={true}>
         {phones !== undefined && (
           phones.map((phone, i) => {
             return <ItemCard key={i} phone={phone}></ItemCard>

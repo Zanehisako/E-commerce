@@ -2,10 +2,13 @@ import { StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image"
 import Phone from "@/types/phone";
 
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
 export default function ItemCard({ phone }: { phone: Phone }) {
   return (
     <View style={styles.itemCard}>
-      <Image style={styles.image} source={{ uri: phone.url }}></Image>
+      <Image style={styles.image} source={{ uri: phone.url }} cachePolicy={"memory-disk"} placeholder={{ blurhash }} contentFit="cover" transition={1000}></Image>
       <Text style={styles.nameText}>{phone.name}</Text>
       <Text style={styles.priceText}>${phone.price}</Text>
     </View >
@@ -16,7 +19,7 @@ const styles = StyleSheet.create((
     itemCard: {
       position: "relative", height: "100%"
     },
-    image: { backgroundColor: "#EFF1F3", borderRadius: 20, height: 400, width: 320 },
+    image: { backgroundColor: "#EFF1F3", borderRadius: 20, height: 170, width: 170, },
     nameText: { fontSize: 16, fontWeight: "bold", alignSelf: "center" },
     priceText: { fontSize: 14, fontWeight: "normal", alignSelf: "center" }
   }
