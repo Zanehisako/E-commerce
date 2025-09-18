@@ -39,7 +39,7 @@ export default function HomeScreen() {
   }, [phones])
 
   return (
-    <View style={styles.main}>
+    <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <SearchBar />
       <Text style={styles.categories}>Categories</Text>
       <ScrollView contentContainerStyle={{ gap: 20 }} style={styles.imagesHorizontallScroll} horizontal={true}>
@@ -50,7 +50,7 @@ export default function HomeScreen() {
         )
         }
       </ScrollView>
-    </View >
+    </ScrollView >
   );
 }
 
@@ -62,7 +62,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     padding: 30,
-    gap: 20
+    paddingTop: 70,
+    gap: 20,
+    backgroundColor: "white"
   },
   imagesHorizontallScroll: {
     flex: 1,

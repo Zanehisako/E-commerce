@@ -7,8 +7,9 @@ export default function ItemCard({ phone }: { phone: Phone }) {
     <View style={{ position: "relative", height: "100%" }}>
       <View>
         <Image style={{ borderRadius: 20, height: 400, width: 320 }} source={{ uri: phone.url }}></Image>
-        <Text style={{ fontSize: 14 }}>{phone.name}</Text>
-      </View>
-    </View>
+        <Text style={{ fontSize: 16, fontWeight: "bold", alignSelf: "center" }}>{phone.name}</Text>
+        <Text style={{ fontSize: 14, fontWeight: "normal", alignSelf: "center" }}>${phone.price}</Text>
+      </View >
+    </View >
   )
 }

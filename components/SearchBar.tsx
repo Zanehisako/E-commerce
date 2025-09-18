@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 5,
     justifyContent: "space-between",
-    borderWidth: 1,
     borderRadius: 20,
+    backgroundColor: "#EFF1F3"
   },
   SearchTextInput: {
     width: "100%",
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   SearchIcon: {
-    alignSelf: "center"
+    alignSelf: "center",
+    color: "#7C7E80",
   }
 })
