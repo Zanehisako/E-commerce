@@ -1,54 +1,51 @@
 import SearchBar from '@/components/SearchBar';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LegendList } from "@legendapp/list";
 import { useEffect, useState } from 'react';
-import { Image } from 'expo-image';
 import supabase from '../supabaseClient';
 import ItemCard from '@/components/ItemCard';
+import Phone from '@/types/phone';
 
 export default function HomeScreen() {
-  const [imagesNames, setImagesNames] = useState<string[]>()
+  const [phones, setPhones] = useState<Phone[]>()
 
-  async function downloadImage() {
+  async function getPhones() {
 
     try {
-      console.log('Downloading images',)
+      console.log('Getting Phones...',)
 
-      const { data, error } = await supabase.storage.from('images').list("phones", {
-        offset: 1//we skip the metadata about the folder so we only retrives the phones
-      })
+      const { data, error } = await supabase.from('phones').select()
 
       if (error) { console.log("error:", error); throw error }
 
-      const names = data?.map((object) => {
-        return object.name
+      console.log('data:', data)
+
+      const phones = data?.map((object) => {
+        return object as Phone
       })
 
-      //console.log("names:", names)
-
-      setImagesNames(names)
+      setPhones(phones)
 
 
-    } catch {
-
+    } catch (e) {
+      console.log("error:", e)
     }
   }
   useEffect(() => {
-    downloadImage()
+    getPhones()
   }, [])
 
   useEffect(() => {
-    console.log("imagesNames", imagesNames)
-  }, [imagesNames])
+    console.log("phones", phones)
+  }, [phones])
 
   return (
     <View style={styles.main}>
       <SearchBar />
       <Text style={styles.categories}>Categories</Text>
       <ScrollView contentContainerStyle={{ gap: 20 }} style={styles.imagesHorizontallScroll} horizontal={true}>
-        {imagesNames !== undefined && (
-          imagesNames.map((name, i) => {
-            return <ItemCard key={i} name={name}></ItemCard>
+        {phones !== undefined && (
+          phones.map((phone, i) => {
+            return <ItemCard key={i} phone={phone}></ItemCard>
           })
         )
         }
