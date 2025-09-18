@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import supabase from '../supabaseClient';
 import ItemCard from '@/components/ItemCard';
 import Phone from '@/types/phone';
+import CategoryCards from '@/components/CategoriesCards';
 
 export default function HomeScreen() {
   const [phones, setPhones] = useState<Phone[]>()
@@ -42,6 +43,7 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <SearchBar />
       <Text style={styles.categories}>Categories</Text>
+      <CategoryCards></CategoryCards>
       <ScrollView contentContainerStyle={{ gap: 10 }} style={styles.imagesHorizontallScroll} horizontal={true}>
         {phones !== undefined && (
           phones.map((phone, i) => {
