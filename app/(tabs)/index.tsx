@@ -7,6 +7,7 @@ import Phone from '@/types/phone';
 import CategoryCards from '@/components/CategoriesCards';
 import { LegendList } from "@legendapp/list"
 import Banner from '@/components/Banner';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function HomeScreen() {
   const [phones, setPhones] = useState<Phone[]>()
@@ -43,7 +44,10 @@ export default function HomeScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
-      <SearchBar />
+      <View style={styles.topBar}>
+        <SearchBar />
+        <Ionicons style={styles.carIcon} name='cart' size={20} />
+      </View>
       <Banner />
       <Text style={styles.categories}>Categories</Text>
       <CategoryCards></CategoryCards>
@@ -75,8 +79,21 @@ const styles = StyleSheet.create({
     gap: 20,
     backgroundColor: "white"
   },
+  topBar: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+    paddingRight: 50
+  },
   categories: {
     fontSize: 20,
     fontWeight: "bold"
+  },
+  carIcon: {
+    alignSelf: "center",
+    backgroundColor: "#EFF1F3",
+    padding: 15,
+    borderRadius: 30
   }
+
 });
