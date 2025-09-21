@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native';
 export default function WelcomeScreen() {
   return (
     <Animated.View>
-      <LottieView style={styles.animation} source={require('../assets/animations/shopping cart.json')} autoPlay loop />
+      <LottieView style={styles.animation} source={require('../../assets/animations/shopping cart.json')} autoPlay loop />
       <Animated.Text>Login/Sign-Up</Animated.Text>
     </Animated.View>
   )
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 30,
     gap: 20,
+    backgroundColor: "white"
   },
   animation: {
     alignSelf: "center",
