@@ -1,11 +1,9 @@
+import { Stack } from "expo-router";
 
-import React from 'react';
-
-import WelcomeScreen from './welcomeScreen';
-
-export default function TabLayout() {
-
+export default function AuthLayout() {
   return (
-    <WelcomeScreen />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="welcomeScreen"></Stack.Screen>
+    </Stack >
   );
 }

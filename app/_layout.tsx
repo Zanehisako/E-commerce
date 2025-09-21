@@ -1,47 +1,49 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import supabase from './supabaseClient';
 import { useEffect, useState } from 'react';
+import { Session } from '@supabase/supabase-js';
 
 export default function RootLayout() {
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const [authState, setAuthState] = useState<string>()
-
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+  // undefined = still loading, null = not logged in
 
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "INITIAL_SESSION") {
-        console.log("INITIAL_SESSION")
-        setAuthState("INITIAL_SESSION")
-        router.replace("/welcomeScreen")
-      }
-      if (event === "SIGNED_IN") {
-        console.log("SIGNED_IN")
-        setAuthState("SIGNED_IN")
-        router.replace("/(tabs)")
-      }
-      if (event === "SIGNED_OUT") {
-        console.log("SIGNED_OUT")
-        setAuthState("SIGNED_OUT")
-        router.replace("/welcomeScreen")
-      }
-    })
-    return data.subscription.unsubscribe()
-  }, [])
+    // Get session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
 
+    // Subscribe to auth changes
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      subscription?.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("session", session)
+    if (session === undefined) return; // still loading
+    if (session?.user) {
+      router.replace("/(tabs)");
+    } else {
+      router.replace("/(auth)/welcomeScreen");
+    }
+  }, [session]);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName='(auth)'>
+      <Stack initialRouteName="(auth)">
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
