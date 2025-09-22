@@ -1,6 +1,8 @@
+import AnimatedButton from "@/components/AnimatedButton";
 import { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
+import supabase from "../supabaseClient";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>()
@@ -9,6 +11,18 @@ export default function LoginPage() {
     <Animated.View style={styles.main}>
       <TextInput placeholder="Enter your email:" value={email} onChangeText={setEmail} keyboardType="email-address" style={styles.textInput}></TextInput>
       <TextInput placeholder="Enter your password:" value={password} onChangeText={setPassword} secureTextEntry={true} style={styles.textInput}></TextInput>
+      <AnimatedButton
+        text="Login"
+        style={styles.loginButton}
+        onPress={async () => {
+          if (email && password) {
+            const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: password, })
+            if (error) {
+              throw error;
+            }
+            console.log('data', data)
+          }
+        }} />
     </Animated.View>
   )
 }
@@ -21,7 +35,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 30,
     gap: 20,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    justifyContent: "center"
   },
   textInput: {
     width: "100%",
@@ -32,4 +47,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#EFF1F3"
   },
+  loginButton: {
+    alignSelf: "center",
+    backgroundColor: "#2165EC",
+  }
 })
