@@ -6,7 +6,8 @@ export default function WelcomeScreen() {
   return (
     <Animated.View style={styles.main}>
       <LottieView style={styles.animation} source={require('../../assets/animations/shopping cart.json')} autoPlay loop />
-      <Animated.Text>Login/Sign-Up</Animated.Text>
+      <Animated.Text style={styles.extraText}>Experience a brand new way of shopping!Get started now</Animated.Text>
+      <Animated.Text style={styles.continueText}>Continue</Animated.Text>
     </Animated.View>
   )
 
@@ -27,12 +28,24 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "70%"
   },
-  text: {
+  extraText: {
     alignSelf: "center",
-    width: "100%",
-    height: "100%",
-    padding: 30,
+    width: "110%",
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "600",
+    lineHeight: 30,
+  },
+  continueText: {
+    marginTop: 30,
+    alignSelf: "center",
+    width: "50%",
+    paddingVertical: 20,
     borderRadius: 20,
-    backgroundColor: "blue",
+    backgroundColor: "#2165EC",
+    color: "white",
+    textAlign: "center",
+    fontSize: 15,
+    fontWeight: "500",
   }
 })
