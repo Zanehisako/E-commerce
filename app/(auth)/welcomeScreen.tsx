@@ -1,13 +1,15 @@
 import { StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import LottieView from 'lottie-react-native';
+import { useRouter } from "expo-router";
 
 export default function WelcomeScreen() {
+  const router = useRouter()
   return (
     <Animated.View style={styles.main}>
       <LottieView style={styles.animation} source={require('../../assets/animations/shopping cart.json')} autoPlay loop />
       <Animated.Text style={styles.extraText}>Experience a brand new way of shopping!Get started now</Animated.Text>
-      <Animated.Text style={styles.continueText}>Continue</Animated.Text>
+      <Animated.Text onPress={() => router.replace("/(auth)/loginPage")} style={styles.continueText}>Continue</Animated.Text>
     </Animated.View>
   )
 
