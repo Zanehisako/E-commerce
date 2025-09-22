@@ -2,14 +2,23 @@ import { StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import LottieView from 'lottie-react-native';
 import { useRouter } from "expo-router";
+import AnimatedButton from "@/components/AnimatedButton";
 
 export default function WelcomeScreen() {
   const router = useRouter()
   return (
     <Animated.View style={styles.main}>
       <LottieView style={styles.animation} source={require('../../assets/animations/shopping cart.json')} autoPlay loop />
-      <Animated.Text style={styles.extraText}>Experience a brand new way of shopping!Get started now</Animated.Text>
-      <Animated.Text onPress={() => router.replace("/(auth)/loginPage")} style={styles.continueText}>Continue</Animated.Text>
+      <Animated.Text style={styles.mainText}>Shopping reimagined</Animated.Text>
+      <Animated.Text style={styles.extraText}>Experience a brand new way of shopping</Animated.Text>
+      <AnimatedButton
+        text="Get Started"
+        textStyle={styles.getStartedText}
+        onPress={() => router.replace("/(auth)/loginPage")}
+        style={styles.getStartedButton} />
+      <Animated.Text
+        onPress={() => router.replace("/(auth)/signUpPage")}
+        style={styles.signUpText}>I don't have an account</Animated.Text>
     </Animated.View>
   )
 
@@ -22,32 +31,48 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     padding: 30,
-    gap: 20,
-    backgroundColor: "white"
+    backgroundColor: "white",
+    gap: 15,
   },
   animation: {
     alignSelf: "center",
     width: "100%",
-    height: "70%"
+    height: "65%"
+  },
+  mainText: {
+    alignSelf: "center",
+    width: "100%",
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "bold",
   },
   extraText: {
     alignSelf: "center",
-    width: "110%",
+    width: "70%",
     textAlign: "center",
-    fontSize: 20,
-    fontWeight: "600",
-    lineHeight: 30,
+    fontSize: 18,
+    fontWeight: "normal",
+    color: "#7C7E80",
   },
-  continueText: {
+  getStartedButton: {
     marginTop: 30,
     alignSelf: "center",
-    width: "50%",
-    paddingVertical: 20,
-    borderRadius: 20,
+    width: "100%",
     backgroundColor: "#2165EC",
-    color: "white",
+  },
+  getStartedText: {
     textAlign: "center",
+    width: "100%",
+    color: "white",
+    fontWeight: "normal",
+    fontSize: 18,
+  },
+  signUpText: {
+    textAlign: "center",
+    width: "100%",
+    color: "#7C7E80",
+    fontWeight: "normal",
     fontSize: 15,
-    fontWeight: "500",
+
   }
 })

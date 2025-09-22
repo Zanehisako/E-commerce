@@ -5,6 +5,7 @@ export default function AuthLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="welcomeScreen"></Stack.Screen>
       <Stack.Screen name="loginPage"></Stack.Screen>
+      <Stack.Screen name="signUpPage"></Stack.Screen>
     </Stack >
   );
 }

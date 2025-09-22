@@ -1,13 +1,14 @@
 import { memo } from "react";
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 interface props {
   text: string,
   onPress: () => void
-  style?: ViewStyle
+  style?: ViewStyle,
+  textStyle?: TextStyle
 }
-function AnimatedButton({ text, onPress, style }: props) {
+function AnimatedButton({ text, onPress, style, textStyle }: props) {
   const scale = useSharedValue(1)
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -27,7 +28,7 @@ function AnimatedButton({ text, onPress, style }: props) {
           onPress()
         }}
       >
-        <Text style={styles.text}>{text}</Text>
+        <Text style={textStyle ? textStyle : styles.text}>{text}</Text>
       </TouchableOpacity>
     </Animated.View>
   )
@@ -36,10 +37,8 @@ export default memo(AnimatedButton)
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: 100,
-    height: 60,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
