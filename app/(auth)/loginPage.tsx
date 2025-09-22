@@ -1,6 +1,6 @@
 import AnimatedButton from "@/components/AnimatedButton";
 import { useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import Animated from "react-native-reanimated";
 import supabase from "../supabaseClient";
 
