@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import supabase from "../supabaseClient";
 import { User } from "@supabase/supabase-js";
+import AnimatedButton from "@/components/AnimatedButton";
+import { router } from "expo-router";
 
 export default function ProfilePage() {
   const [firstName, setFirstName] = useState<string>()
@@ -26,6 +28,13 @@ export default function ProfilePage() {
   return (
     <View style={styles.main}>
       <Text style={styles.text}>Profile Page</Text>
+      <AnimatedButton
+        text="Sign out"
+        onPress={async () => {
+          await supabase.auth.signOut()
+        }}
+        style={styles.signOutButton}
+      />
     </View>)
 }
 
@@ -42,5 +51,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 24,
     fontWeight: "bold"
+  },
+  signOutButton: {
+    alignSelf: "center",
+    backgroundColor: "red"
   },
 });
