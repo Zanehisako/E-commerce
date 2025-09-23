@@ -17,7 +17,7 @@ export default function WelcomeScreen() {
         onPress={() => router.push("/(auth)/loginPage")}
         style={styles.getStartedButton} />
       <Animated.Text
-        onPress={() => router.push("/(auth)/signUpPage")}
+        onPress={() => router.push("/(auth)/infoPage")}
         style={styles.signUpText}>I don't have an account</Animated.Text>
     </Animated.View>
   )

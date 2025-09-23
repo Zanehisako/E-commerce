@@ -13,6 +13,7 @@ export default function InfoTextInput({ value, placeholder, secureTextEntry, set
   useEffect(() => {
     if (validate) {
       if (value === undefined) {
+        console.log('setting border to red')
         setBorderColor("red")
       }
     }
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     padding: 10,
     borderRadius: 20,
+    borderWidth: 1,
     backgroundColor: "#EFF1F3"
   },
 })
