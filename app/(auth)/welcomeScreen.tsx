@@ -14,10 +14,10 @@ export default function WelcomeScreen() {
       <AnimatedButton
         text="Get Started"
         textStyle={styles.getStartedText}
-        onPress={() => router.replace("/(auth)/loginPage")}
+        onPress={() => router.push("/(auth)/loginPage")}
         style={styles.getStartedButton} />
       <Animated.Text
-        onPress={() => router.replace("/(auth)/signUpPage")}
+        onPress={() => router.push("/(auth)/signUpPage")}
         style={styles.signUpText}>I don't have an account</Animated.Text>
     </Animated.View>
   )

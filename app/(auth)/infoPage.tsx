@@ -12,7 +12,7 @@ export default function InfoPage() {
   const [address, setAddress] = useState<string>()
   return (
     <Animated.View style={styles.main}>
-      <Ionicons name="arrow-back" size={20} style={styles.backIcon} />
+      <Ionicons name="arrow-back" onPress={() => router.back()} size={20} style={styles.backIcon} />
       <TextInput placeholder="Enter your first name:" value={firstName} onChangeText={setFirstName} keyboardType="default" style={styles.textInput}></TextInput>
       <TextInput placeholder="Enter your last name:" value={lastName} onChangeText={setLastName} keyboardType="phone-pad" style={styles.textInput}></TextInput>
       <TextInput placeholder="Enter your address:" value={address} onChangeText={setAddress} secureTextEntry={true} style={styles.textInput}></TextInput>

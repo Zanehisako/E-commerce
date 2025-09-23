@@ -3,12 +3,15 @@ import { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
 import Animated from "react-native-reanimated";
 import supabase from "../supabaseClient";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
   return (
     <Animated.View style={styles.main}>
+      <Ionicons name="arrow-back" onPress={() => router.back()} size={20} style={styles.backIcon} />
       <TextInput placeholder="Enter your email:" value={email} onChangeText={setEmail} keyboardType="email-address" style={styles.textInput}></TextInput>
       <TextInput placeholder="Enter your password:" value={password} onChangeText={setPassword} secureTextEntry={true} style={styles.textInput}></TextInput>
       <AnimatedButton
@@ -31,12 +34,18 @@ const styles = StyleSheet.create({
   main: {
     width: "100%",
     height: "100%",
+    position: "relative",
     flex: 1,
     flexDirection: "column",
     padding: 30,
     gap: 20,
     backgroundColor: "white",
     justifyContent: "center"
+  },
+  backIcon: {
+    position: "absolute",
+    top: 10,
+    left: 5,
   },
   textInput: {
     width: "100%",
