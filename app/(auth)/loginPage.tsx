@@ -18,7 +18,7 @@ export default function LoginPage() {
           if (email && password) {
             const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: password, })
             if (error) {
-              throw error;
+              alert(error);
             }
             console.log('data', data)
           }

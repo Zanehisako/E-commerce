@@ -23,7 +23,7 @@ export default function SignUpPage() {
             if ((password && confirmePassword) && (password === confirmePassword)) {
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
               if (error) {
-                throw error;
+                alert(error);
               }
               console.log('data', data)
             } else {
