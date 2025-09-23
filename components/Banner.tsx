@@ -35,8 +35,8 @@ export default function Banner() {
   function animateScroll() {
     if (banners.length > 0) {
       if (legendListRef.current) {
-        console.log("animating scroll")
-        console.log("scrollIndex:", scrollIndex)
+        // console.log("animating scroll")
+        // console.log("scrollIndex:", scrollIndex)
         legendListRef.current.scrollToIndex({ index: scrollIndex, animated: true })
       }
     }
@@ -83,12 +83,12 @@ export default function Banner() {
     getBanners()
   }, [])
 
-  useEffect(() => {
-    console.log("banners length:", banners.length)
-  }, [banners])
+  // useEffect(() => {
+  //   console.log("banners length:", banners.length)
+  // }, [banners])
 
   useEffect(() => {
-    console.log("imagesLoaded")
+    //console.log("imagesLoaded")
     const interval = setInterval(() => {
       setScrollIndex(prev =>
         prev >= banners.length - 1 ? 0 : prev + 1
