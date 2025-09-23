@@ -4,23 +4,27 @@ import { StyleSheet, TextInput } from "react-native";
 import Animated from "react-native-reanimated";
 import supabase from "../supabaseClient";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import InfoTextInput from "@/components/InfoInput";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
   const [confirmePassword, setConfirmePassword] = useState<string>()
   const [phone, setPhone] = useState<string>()
+  const [validate, setValidate] = useState<boolean>(false)
   return (
     <Animated.View style={styles.main}>
       <Ionicons name="arrow-back" onPress={() => router.back()} size={20} style={styles.backIcon} />
-      <TextInput placeholder="Enter your email:" value={email} onChangeText={setEmail} keyboardType="email-address" style={styles.textInput}></TextInput>
-      <TextInput placeholder="Enter your phone:" value={phone} onChangeText={setPhone} keyboardType="phone-pad" style={styles.textInput}></TextInput>
-      <TextInput placeholder="Enter your password:" value={password} onChangeText={setPassword} secureTextEntry={true} style={styles.textInput}></TextInput>
-      <TextInput placeholder="Confirme your password:" value={confirmePassword} onChangeText={setConfirmePassword} secureTextEntry={true} style={styles.textInput}></TextInput>
+      <InfoTextInput validate={validate} placeholder="Enter your email:" value={email} setValue={setEmail} keyboardType="email-address" ></InfoTextInput>
+      <InfoTextInput validate={validate} placeholder="Enter your phone:" value={phone} setValue={setPhone} keyboardType="phone-pad" ></InfoTextInput>
+      <InfoTextInput validate={validate} placeholder="Enter your password:" value={password} setValue={setPassword} secureTextEntry={true} ></InfoTextInput>
+      <InfoTextInput validate={validate} placeholder="Confirme your password:" value={confirmePassword} setValue={setConfirmePassword} secureTextEntry={true} ></InfoTextInput>
       <AnimatedButton
         text="Sign-Up"
         style={styles.loginButton}
         onPress={async () => {
+          setValidate(true)
           if (email) {
             if ((password && confirmePassword) && (password === confirmePassword)) {
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
