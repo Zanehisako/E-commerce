@@ -4,7 +4,7 @@ import { StyleSheet, TextInput } from "react-native";
 import Animated from "react-native-reanimated";
 import supabase from "../supabaseClient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import InfoTextInput from "@/components/InfoInput";
 
 export default function SignUpPage() {
@@ -13,6 +13,9 @@ export default function SignUpPage() {
   const [confirmePassword, setConfirmePassword] = useState<string>()
   const [phone, setPhone] = useState<string>()
   const [validate, setValidate] = useState<boolean>(false)
+  const params = useLocalSearchParams();
+  console.log("params", params)
+  const { firstName, lastName, address } = params; // Destructure the parameters you expect
   return (
     <Animated.View style={styles.main}>
       <Ionicons name="arrow-back" onPress={() => router.back()} size={20} style={styles.backIcon} />
@@ -27,6 +30,8 @@ export default function SignUpPage() {
           setValidate(true)
           if (email) {
             if ((password && confirmePassword) && (password === confirmePassword)) {
+
+              const { status, statusText } = await supabase.from("users").insert({ first_name: firstName, last_name: lastName, address: address })
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
               if (error) {
                 alert(error);

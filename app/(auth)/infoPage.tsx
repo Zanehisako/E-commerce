@@ -23,22 +23,17 @@ export default function InfoPage() {
         style={styles.backIcon} />
       <InfoTextInput validate={validate} placeholder="Enter your first name:" value={firstName} setValue={setFirstName} keyboardType="default" ></InfoTextInput>
       <InfoTextInput validate={validate} placeholder="Enter your last name:" value={lastName} setValue={setLastName} keyboardType="phone-pad" ></InfoTextInput>
-      <InfoTextInput validate={validate} placeholder="Enter your address:" value={address} setValue={setAddress} secureTextEntry={true} ></InfoTextInput>
+      <InfoTextInput validate={validate} placeholder="Enter your address:" value={address} setValue={setAddress} ></InfoTextInput>
       <AnimatedButton
         text="Continue"
         style={styles.loginButton}
         onPress={async () => {
           setValidate(true)
           if (firstName || lastName || address) {
-            const { status, statusText } = await supabase.from("users").insert({ first_name: firstName, last_name: lastName, address: address })
-            console.log("status text:", statusText)
-            if (status !== 201) {
-              alert(`error inserting user:${status}`)
-            } else {
-              router.push("/(auth)/signUpPage")
-            }
-          } else {
-            alert("All fields must be filled")
+            router.push({
+              pathname: "/(auth)/signUpPage",
+              params: { firstName: firstName, lastName: lastName, address: address }
+            })
           }
         }} />
     </Animated.View>
