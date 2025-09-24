@@ -14,7 +14,6 @@ export default function SignUpPage() {
   const [phone, setPhone] = useState<string>()
   const [validate, setValidate] = useState<boolean>(false)
   const params = useLocalSearchParams();
-  console.log("params", params)
   const { firstName, lastName, address } = params; // Destructure the parameters you expect
   return (
     <Animated.View style={styles.main}>
@@ -33,10 +32,15 @@ export default function SignUpPage() {
 
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
               if (error) {
-                alert(error);
+                alert(`error sign-in:\n${error}`);
               }
-              console.log('data', data)
-              const { status, statusText } = await supabase.from("users").insert({ id: data.user?.id, first_name: firstName, last_name: lastName, address: address })
+              const { status, statusText } = await supabase.from('users').insert({ first_name: firstName, last_name: lastName, address: address })
+              console.log('status:', status)
+              console.log('statusText:', statusText)
+              if (status !== 201) {
+                alert(`error:\n${statusText}`);
+              }
+              //console.log('data', data)
             } else {
               throw "password is empty or dosent match"
             }

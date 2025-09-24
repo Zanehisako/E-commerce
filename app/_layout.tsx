@@ -29,7 +29,6 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    console.log("session", session)
     if (session === undefined) return; // still loading
     if (session?.user) {
       router.replace("/(tabs)");
