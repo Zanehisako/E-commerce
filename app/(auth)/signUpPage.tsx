@@ -31,12 +31,12 @@ export default function SignUpPage() {
           if (email) {
             if ((password && confirmePassword) && (password === confirmePassword)) {
 
-              const { status, statusText } = await supabase.from("users").insert({ first_name: firstName, last_name: lastName, address: address })
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
               if (error) {
                 alert(error);
               }
               console.log('data', data)
+              const { status, statusText } = await supabase.from("users").insert({ id: data.user?.id, first_name: firstName, last_name: lastName, address: address })
             } else {
               throw "password is empty or dosent match"
             }
