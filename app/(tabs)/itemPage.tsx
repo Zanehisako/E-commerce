@@ -2,8 +2,10 @@ import Banner from "@/components/Banner";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image"
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useEffect, useState } from "react";
+import supabase from "../supabaseClient";
 
-export interface itemInfo {
+export interface Item {
   name: string,
   category: string,
   description: string,
@@ -16,25 +18,48 @@ export interface itemInfo {
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-export default function ItemPage({ name, category, description, imageURL, raiting, price, numberOfReviews }: itemInfo) {
+export default function ItemPage({ id }: { id: string }) {
+  const [item, setItem] = useState<Item>()
+  const getItem = async () => {
+
+    try {
+      console.log('Getting details...',)
+
+      const { data, error } = await supabase.from('items').select().eq('id', id).limit(1)
+
+      if (error) { console.log("error:", error); throw error }
+
+      const item = data[0] as Item
+      console.log("item:", item)
+      setItem(item)
+
+    } catch (e) {
+      console.log("error:", e)
+    }
+  }
+  useEffect(() => {
+    getItem()
+  }, [])
+
   return (
     <ScrollView style={styles.main}>
-      <Image source={{ uri: imageURL }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
-      <View style={styles.namePriceDescriptionContainer}>
-        <View style={styles.namePriceContainer}>
-          <Text style={styles.bigText}>{name}</Text>
-          <Text style={styles.bigText}>${price}</Text>
+      {item !== undefined && <>
+        <Image source={{ uri: item.imageURL }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
+        <View style={styles.namePriceDescriptionContainer}>
+          <View style={styles.namePriceContainer}>
+            <Text style={styles.bigText}>{item.name}</Text>
+            <Text style={styles.bigText}>${item.price}</Text>
+          </View>
+          <Text style={styles.smallText}>{item.category}</Text>
         </View>
-        <Text style={styles.smallText}>{category}</Text>
-      </View>
-      <View style={styles.raitingContainer}>
-        <Ionicons name="star" color={"yellow"} size={10}></Ionicons>
-        <Text>{raiting}</Text>
-        <Text style={styles.smallText}>{numberOfReviews}</Text>
-      </View>
-      <Text style={styles.bigText}>Description:</Text>
-      <Text style={styles.smallText}>{description}</Text>
-
+        <View style={styles.raitingContainer}>
+          <Ionicons name="star" color={"yellow"} size={10}></Ionicons>
+          <Text>{item.raiting}</Text>
+          <Text style={styles.smallText}>{item.numberOfReviews}</Text>
+        </View>
+        <Text style={styles.bigText}>Description:</Text>
+        <Text style={styles.smallText}>{item.description}</Text>
+      </>}
     </ScrollView>
   )
 }

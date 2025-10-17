@@ -10,24 +10,24 @@ import Banner from '@/components/Banner';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function HomeScreen() {
-  const [phones, setPhones] = useState<Phone[]>()
+  const [items, setItems] = useState<Phone[]>()
 
-  async function getPhones() {
+  async function getItems() {
 
     try {
-      //console.log('Getting Phones...',)
+      //console.log('Getting items...',)
 
-      const { data, error } = await supabase.from('phones').select()
+      const { data, error } = await supabase.from('items').select()
 
       if (error) { console.log("error:", error); throw error }
 
       //console.log('data:', data)
 
-      const phones = data?.map((object) => {
+      const items = data?.map((object) => {
         return object as Phone
       })
 
-      setPhones(phones)
+      setItems(items)
 
 
     } catch (e) {
@@ -35,12 +35,12 @@ export default function HomeScreen() {
     }
   }
   useEffect(() => {
-    getPhones()
+    getItems()
   }, [])
 
   useEffect(() => {
-    //console.log("phones", phones)
-  }, [phones])
+    //console.log("items", items)
+  }, [items])
 
   return (
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
@@ -51,9 +51,9 @@ export default function HomeScreen() {
       <Banner />
       <Text style={styles.categories}>Categories</Text>
       <CategoryCards></CategoryCards>
-      {phones !== undefined && (
+      {items !== undefined && (
         <LegendList
-          data={phones}
+          data={items}
           renderItem={({ item }) => <ItemCard phone={item} />}
           keyExtractor={(item) => `${item.id}`}
           recycleItems
