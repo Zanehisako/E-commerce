@@ -3,13 +3,14 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image"
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
-import supabase from "../supabaseClient";
+import supabase from "./supabaseClient";
+import { useLocalSearchParams } from "expo-router";
 
 export interface Item {
   name: string,
   category: string,
   description: string,
-  imageURL: string,
+  url: string,
   price: number,
   raiting: number,
   numberOfReviews: number,
@@ -18,12 +19,14 @@ export interface Item {
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-export default function ItemPage({ id }: { id: string }) {
+export default function ItemPage() {
+  const params = useLocalSearchParams();
+  const id = params.id
   const [item, setItem] = useState<Item>()
   const getItem = async () => {
 
     try {
-      console.log('Getting details...',)
+      console.log(`Getting details for id ${id}...`,)
 
       const { data, error } = await supabase.from('items').select().eq('id', id).limit(1)
 
@@ -44,7 +47,7 @@ export default function ItemPage({ id }: { id: string }) {
   return (
     <ScrollView style={styles.main}>
       {item !== undefined && <>
-        <Image source={{ uri: item.imageURL }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
+        <Image style={styles.image} source={{ uri: item.url }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
         <View style={styles.namePriceDescriptionContainer}>
           <View style={styles.namePriceContainer}>
             <Text style={styles.bigText}>{item.name}</Text>
@@ -90,5 +93,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     borderRadius: 15,
     borderWidth: 1,
-  }
+  },
+  image: { borderRadius: 20, height: 300, width: 350 },
 })
