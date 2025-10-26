@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import supabase from "./supabaseClient";
 import { useLocalSearchParams } from "expo-router";
+import AnimatedButton from "@/components/AnimatedButton";
 
 export interface Item {
   name: string,
@@ -23,8 +24,8 @@ export default function ItemPage() {
   const params = useLocalSearchParams();
   const id = params.id
   const [item, setItem] = useState<Item>()
-  const getItem = async () => {
 
+  const getItem = async () => {
     try {
       console.log(`Getting details for id ${id}...`,)
 
@@ -40,37 +41,45 @@ export default function ItemPage() {
       console.log("error:", e)
     }
   }
+
+
+
   useEffect(() => {
     getItem()
   }, [])
 
   return (
-    <ScrollView style={styles.main}>
-      {item !== undefined && <>
-        <Image style={styles.image} source={{ uri: item.url }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
-        <View style={styles.namePriceDescriptionContainer}>
-          <View style={styles.namePriceContainer}>
-            <Text style={styles.bigText}>{item.name}</Text>
-            <Text style={styles.bigText}>${item.price}</Text>
+    <>
+      {item !== undefined &&
+        <ScrollView contentContainerStyle={styles.main}>
+          <Image style={styles.image} source={{ uri: item.url }} contentFit="fill" cachePolicy={"memory-disk"} placeholder={{ blurhash }} ></Image>
+          <View style={styles.namePriceDescriptionContainer}>
+            <View style={styles.namePriceContainer}>
+              <Text style={styles.bigText}>{item.name}</Text>
+              <Text style={styles.bigText}>${item.price}</Text>
+            </View>
+            <Text style={styles.smallText}>{item.category}</Text>
           </View>
-          <Text style={styles.smallText}>{item.category}</Text>
-        </View>
-        <View style={styles.raitingContainer}>
-          <Ionicons name="star" color={"yellow"} size={10}></Ionicons>
-          <Text>{item.raiting}</Text>
-          <Text style={styles.smallText}>{item.numberOfReviews}</Text>
-        </View>
-        <Text style={styles.bigText}>Description:</Text>
-        <Text style={styles.smallText}>{item.description}</Text>
-      </>}
-    </ScrollView>
+          <View style={styles.raitingContainer}>
+            <Ionicons name="star" color={"yellow"} size={10}></Ionicons>
+            <Text>{item.raiting}</Text>
+            <Text style={styles.smallText}>{item.numberOfReviews}</Text>
+          </View>
+          <Text style={styles.bigText}>Description:</Text>
+          <Text style={styles.smallText}>{item.description}</Text>
+          <View style={{ gap: 10, flexDirection: "row", justifyContent: "center" }}>
+            <AnimatedButton style={{ backgroundColor: "blue" }} text="Buy Now" onPress={() => { }} />
+            <AnimatedButton style={{ backgroundColor: "grey" }} text="Add to cart" onPress={() => { }} />
+          </View>
+        </ScrollView >}
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   main: {
     padding: 30,
-    gap: 10,
+    gap: 30,
   },
   bigText: {
     fontSize: 16,

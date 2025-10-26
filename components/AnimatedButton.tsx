@@ -37,7 +37,7 @@ export default memo(AnimatedButton)
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    padding: 20,
+    padding: 10,
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
