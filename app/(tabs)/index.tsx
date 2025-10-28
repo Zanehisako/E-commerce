@@ -8,6 +8,7 @@ import CategoryCards from '@/components/CategoriesCards';
 import { LegendList } from "@legendapp/list"
 import Banner from '@/components/Banner';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const [items, setItems] = useState<Phone[]>()
@@ -46,7 +47,11 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <View style={styles.topBar}>
         <SearchBar />
-        <Ionicons style={styles.carIcon} name='cart' size={20} />
+        <Ionicons style={styles.carIcon} name='cart' size={20} onPress={
+          () => router.push({
+            pathname: "/cartPage",
+          })
+        } />
       </View>
       <Banner />
       <Text style={styles.categories}>Categories</Text>
