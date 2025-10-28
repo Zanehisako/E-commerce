@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
               const { data, error } = await supabase.auth.signUp({ email: email, password: password, phone: phone })
               if (error) {
-                alert(`error sign-in:\n${error}`);
+                alert(`error sign-in:\n${error.message}`);
               }
               const { status, statusText } = await supabase.from('users').insert({ first_name: firstName, last_name: lastName, address: address })
               console.log('status:', status)

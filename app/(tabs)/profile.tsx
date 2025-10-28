@@ -21,7 +21,7 @@ export default function ProfilePage() {
       console.log("error", error)
       alert(error)
     } else {
-      const { data, error } = await supabase.from("users").select().eq('user_id', user_data.user?.id).limit(1)
+      const { data, error } = await supabase.from("users").select().eq('id', user_data.user?.id).limit(1)
       if (error) {
         console.log("error getting user info", error)
         alert(`error getting user info :\n${error.message}`)

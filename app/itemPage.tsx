@@ -43,6 +43,30 @@ export default function ItemPage() {
   }
 
 
+  const addToCart = async () => {
+    try {
+      console.log(`adding item to cart`,)
+
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      if (userError) {
+        alert(userError)
+      }
+      const user_id = userData.user?.id
+      const { data: userCart, error } = await supabase.from('carts').select('id').eq("user_id", id).limit(1)
+      if (error) {
+        alert(error)
+        return
+      }
+      const card_id = userCart[0].id
+
+      const { data: cartData, error: cartError } = await supabase.from('cartItems').insert({ cart_id: card_id })
+      if (cartError) { console.log("cartError:", cartError); throw cartError }
+
+
+    } catch (e) {
+      console.log("cartError:", e)
+    }
+  }
 
   useEffect(() => {
     getItem()

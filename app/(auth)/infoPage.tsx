@@ -2,7 +2,6 @@ import AnimatedButton from "@/components/AnimatedButton";
 import { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
 import Animated from "react-native-reanimated";
-import supabase from "../supabaseClient";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import InfoTextInput from "@/components/InfoInput";
