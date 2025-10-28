@@ -52,16 +52,10 @@ export default function ItemPage() {
         alert(userError)
       }
       const user_id = userData.user?.id
-      const { data: userCart, error } = await supabase.from('carts').select('id').eq("user_id", id).limit(1)
-      if (error) {
-        alert(error)
-        return
-      }
-      const card_id = userCart[0].id
 
-      const { data: cartData, error: cartError } = await supabase.from('cartItems').insert({ cart_id: card_id })
+      const { data: cartData, error: cartError } = await supabase.from('cart_items').insert({ item_id: id, count: 1, user_id: user_id })
       if (cartError) { console.log("cartError:", cartError); throw cartError }
-
+      console.log(`done adding item ${id} to cart`)
 
     } catch (e) {
       console.log("cartError:", e)
@@ -93,7 +87,7 @@ export default function ItemPage() {
           <Text style={styles.smallText}>{item.description}</Text>
           <View style={{ gap: 10, flexDirection: "row", justifyContent: "center" }}>
             <AnimatedButton style={{ backgroundColor: "blue" }} text="Buy Now" onPress={() => { }} />
-            <AnimatedButton style={{ backgroundColor: "grey" }} text="Add to cart" onPress={() => { }} />
+            <AnimatedButton style={{ backgroundColor: "grey" }} text="Add to cart" onPress={async () => { await addToCart() }} />
           </View>
         </ScrollView >}
     </>
