@@ -2,18 +2,40 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 import supabase from "./supabaseClient";
 import { useLocalSearchParams } from "expo-router";
+import CartItemCard from "@/components/CartItemCard";
 
-export interface Item {
+import { LegendList } from "@legendapp/list"
+
+
+
+interface cartItemDB {
+  count: number,
+  created_at: string,
+  id: string,
+  item_id: string,
+  user_id: string,
+}
+
+export interface CartItem {
+  id: string,
   name: string,
-  category: string,
-  description: string,
   url: string,
   price: number,
-  raiting: number,
-  numberOfReviews: number,
+  count: number,
 }
 
 export default function CartPage() {
+  const [cartItems, setCartItems] = useState<CartItem[]>()
+
+  const getItem = async (id: string) => {
+    console.log(`getting items`,)
+
+    const { data: itemData, error: itemError } = await supabase.from('items').select('id,name,url,price').eq('id', id).limit(1)
+    if (itemError) { console.log("itemError:", itemError); throw itemError }
+    console.log("item :", itemData)
+    return itemData[0] as CartItem
+    //setitemItems(itemData)
+  }
 
   const getCartItems = async () => {
     try {
@@ -28,6 +50,13 @@ export default function CartPage() {
       const { data: cartData, error: cartError } = await supabase.from('cart_items').select().eq('user_id', user_id)
       if (cartError) { console.log("cartError:", cartError); throw cartError }
       console.log("cart items:", cartData)
+      const carItemsDB = cartData as cartItemDB[]
+      var cartItems: CartItem[] = []
+      for (const cartItemDB of carItemsDB) {
+        const item = await getItem(cartItemDB.item_id)
+        cartItems.push({ ...item, count: cartItemDB.count })
+      }
+      setCartItems(cartItems)
     } catch (e) {
       console.log("cartError:", e)
     }
@@ -38,9 +67,21 @@ export default function CartPage() {
   }, [])
 
   return (
-    <ScrollView></ScrollView>
+    <ScrollView>
+      {cartItems !== undefined && (
+        <LegendList
+          data={cartItems}
+          renderItem={({ item }) => <CartItemCard cartItem={item} />}
+          keyExtractor={(item) => `${item.id}`}
+          numColumns={1}
+          contentContainerStyle={{ gap: 10 }}
+        ></LegendList>
+      )
+      }
+    </ScrollView>
   )
 }
+
 
 const styles = StyleSheet.create({
   main: {
