@@ -43,6 +43,15 @@ export default function CartPage() {
       //setitemItems(itemData)
     }
   }
+  const deleteItem = async (id: string) => {
+    console.log(`Deleting item ${id}`,)
+
+
+    const { data: itemData, error: itemError } = await supabase.from('cart_items').delete().eq('id', id)
+    if (itemError) { console.log("itemError:", itemError); throw itemError }
+    console.log(`${itemData}`)
+    await getCartItems()
+  }
 
   const removeItem = async (id: string) => {
     console.log(`removing item ${id}`,)
@@ -106,7 +115,7 @@ export default function CartPage() {
       {cartItems !== undefined && (
         <LegendList
           data={cartItems}
-          renderItem={({ item }) => <CartItemCard addItem={addItem} removeItem={removeItem} cartItem={item} />}
+          renderItem={({ item }) => <CartItemCard addItem={addItem} removeItem={removeItem} deleteItem={deleteItem} cartItem={item} />}
           keyExtractor={(item) => `${item.id}`}
           numColumns={1}
           contentContainerStyle={{ gap: 10 }}
