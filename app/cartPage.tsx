@@ -27,12 +27,47 @@ export interface CartItem {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>()
 
+  const addItem = async (id: string) => {
+    console.log(`adding item ${id}`,)
+
+    const { data: cartItemData, error: cartItemError } = await supabase.from('cart_items').select('count').eq('id', id).limit(1)
+    if (cartItemError) {
+      alert(cartItemError.message)
+    } else {
+
+      const count = cartItemData[0].count
+
+      const { data: itemData, error: itemError } = await supabase.from('cart_items').update({ 'count': count + 1 }).eq('id', id).limit(1)
+      if (itemError) { console.log("itemError:", itemError); throw itemError }
+      console.log(`${itemData}`)
+      //setitemItems(itemData)
+    }
+  }
+
+  const removeItem = async (id: string) => {
+    console.log(`removing item ${id}`,)
+
+    const { data: cartItemData, error: cartItemError } = await supabase.from('cart_items').select('count').eq('id', id).limit(1)
+    if (cartItemError) {
+      alert(cartItemError.message)
+    } else {
+      console.log('item:', cartItemData)
+
+      const count = cartItemData[0].count
+
+      const { data: itemData, error: itemError } = await supabase.from('cart_items').update({ 'count': count - 1 }).eq('id', id).limit(1)
+      if (itemError) { console.log("itemError:", itemError); throw itemError }
+      console.log(`${itemData}`)
+      //setitemItems(itemData)
+    }
+  }
+
+
   const getItem = async (id: string) => {
     console.log(`getting items`,)
 
     const { data: itemData, error: itemError } = await supabase.from('items').select('id,name,url,price').eq('id', id).limit(1)
     if (itemError) { console.log("itemError:", itemError); throw itemError }
-    console.log("item :", itemData)
     return itemData[0] as CartItem
     //setitemItems(itemData)
   }
@@ -54,7 +89,7 @@ export default function CartPage() {
       var cartItems: CartItem[] = []
       for (const cartItemDB of carItemsDB) {
         const item = await getItem(cartItemDB.item_id)
-        cartItems.push({ ...item, count: cartItemDB.count })
+        cartItems.push({ ...item, id: cartItemDB.id, count: cartItemDB.count })
       }
       setCartItems(cartItems)
     } catch (e) {
@@ -71,7 +106,7 @@ export default function CartPage() {
       {cartItems !== undefined && (
         <LegendList
           data={cartItems}
-          renderItem={({ item }) => <CartItemCard cartItem={item} />}
+          renderItem={({ item }) => <CartItemCard addItem={addItem} removeItem={removeItem} cartItem={item} />}
           keyExtractor={(item) => `${item.id}`}
           numColumns={1}
           contentContainerStyle={{ gap: 10 }}

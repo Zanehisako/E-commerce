@@ -1,12 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image"
 import { CartItem } from "@/app/cartPage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+interface props {
+  cartItem: CartItem,
+  addItem: (id: string) => Promise<void>,
+  removeItem: (id: string) => Promise<void>,
+}
+
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-export default function CartItemCard({ cartItem }: { cartItem: CartItem }) {
+export default function CartItemCard({ cartItem, addItem, removeItem }: props) {
   return (
     <View style={styles.cartItemCard}>
       <Image style={styles.image} source={{ uri: cartItem.url }} cachePolicy={"memory-disk"} placeholder={{ blurhash }} contentFit="cover" transition={1000}></Image>
@@ -17,9 +23,9 @@ export default function CartItemCard({ cartItem }: { cartItem: CartItem }) {
       <View style={styles.itemCount}>
         <Ionicons name="trash-bin" size={14}></Ionicons>
         <View style={styles.addRemoveItem}>
-          <Text>-</Text>
+          <Button onPress={() => removeItem(cartItem.id)} title="-" />
           <Text>{cartItem.count}</Text>
-          <Text>+</Text>
+          <Button onPress={() => addItem(cartItem.id)} title="+" />
         </View>
       </View>
     </View >
