@@ -81,6 +81,16 @@ export default function CartPage() {
     //setitemItems(itemData)
   }
 
+  const getCount = async (id: string) => {
+    console.log(`getting new count`,)
+
+    const { data: itemData, error: itemError } = await supabase.from('cart_items').select('count').eq('id', id).limit(1)
+    if (itemError) { console.log("itemError:", itemError); throw itemError }
+    const newCount = itemData[0].count
+    console.log('new count is :', newCount)
+    return newCount
+  }
+
   const getCartItems = async () => {
     try {
       console.log(`getting cart items`,)
@@ -115,7 +125,7 @@ export default function CartPage() {
       {cartItems !== undefined && (
         <LegendList
           data={cartItems}
-          renderItem={({ item }) => <CartItemCard addItem={addItem} removeItem={removeItem} deleteItem={deleteItem} cartItem={item} />}
+          renderItem={({ item }) => <CartItemCard addItem={addItem} removeItem={removeItem} deleteItem={deleteItem} getCount={getCount} cartItem={item} />}
           keyExtractor={(item) => `${item.id}`}
           numColumns={1}
           contentContainerStyle={{ gap: 10 }}
