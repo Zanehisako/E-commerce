@@ -3,7 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from "react";
 
 interface props {
-  queryFunction: () => void
+  queryFunction: (query: string) => Promise<void>
 }
 
 export default function SearchBar({ queryFunction }: props) {
@@ -16,7 +16,7 @@ export default function SearchBar({ queryFunction }: props) {
         onChangeText={setSearchText}
         placeholder="search..."
         value={seachText}
-        onSubmitEditing={async () => { console.log('Done submiting:', seachText); queryFunction(); }}
+        onSubmitEditing={async () => { console.log('Done submiting:', seachText); queryFunction(seachText); }}
       ></TextInput>
     </View>
   );
