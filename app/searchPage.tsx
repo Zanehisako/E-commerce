@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet, Text } from "react-native";
-import supabase from "../supabaseClient";
+import supabase from "./supabaseClient";
 import { useEffect, useState } from "react";
 import SearchBar from '@/components/SearchBar';
 
@@ -11,7 +11,7 @@ import { LegendList } from "@legendapp/list"
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-interface searchItem {
+interface SearchItem {
   id?: string,
   name?: string,
   price?: number,
@@ -20,8 +20,11 @@ interface searchItem {
   description?: string,
   created_at?: string,
 }
+interface props {
+  searchFunction: () => Promise<{ data: any, error: any }>
+}
 
-export function SearchItemCard({ name, price, url }: searchItem) {
+export function SearchItemCard({ name, price, url }: SearchItem) {
 
   return (
     <View style={styles.cartItemCard}>
@@ -34,22 +37,10 @@ export function SearchItemCard({ name, price, url }: searchItem) {
   )
 }
 
-export default function SearchPage() {
-  const [searchItems, setSearchItems] = useState<searchItem[]>()
-  const queryFunction = async (query: string) => {
-    const { data: itemsData, error: itemsError } = await supabase.from("items").select('*').eq('name', query)
-    if (itemsError) {
-      alert(itemsError.message)
-    } else {
-      console.log("items:", itemsData)
-      const searchItemsDB = itemsData as searchItem[]
-      setSearchItems(searchItemsDB)
-    }
-  }
+export default function SearchPage(searchItems: SearchItem[]) {
 
   return (
     <ScrollView>
-      <SearchBar queryFunction={queryFunction} />
       {searchItems !== undefined && (
         <LegendList
           data={searchItems}

@@ -1,13 +1,27 @@
+import supabase from "@/app/supabaseClient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
 function CategoryCard({ name, iconName }: { name: string, iconName: keyof typeof Ionicons.glyphMap }) {
+  const searchFunction = async () => {
+    return await supabase.from("items").select("*").eq('category', name)
+  }
   return (
-    <View style={{ flexDirection: "column", gap: 10 }} >
-      <Ionicons style={styles.icon} name={iconName} size={20}></Ionicons>
-      <Text style={styles.iconText}>{name}</Text>
-    </View>
+    <TouchableOpacity onPress={() => {
+      router.navigate({
+        pathname: "/searchPage",
+        params: {
+          searchFunction: searchFunction()
+        }
+      })
+    }}>
+      <View style={{ flexDirection: "column", gap: 10 }} >
+        <Ionicons style={styles.icon} name={iconName} size={20}></Ionicons>
+        <Text style={styles.iconText}>{name}</Text>
+      </View>
+    </TouchableOpacity>
   )
 }
 

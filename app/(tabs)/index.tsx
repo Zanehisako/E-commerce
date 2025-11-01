@@ -46,7 +46,7 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <View style={styles.topBar}>
-        <SearchBar />
+        {/* <SearchBar /> */}
         <Ionicons style={styles.carIcon} name='cart' size={20} onPress={
           () => router.push({
             pathname: "/cartPage",
@@ -55,7 +55,7 @@ export default function HomeScreen() {
       </View>
       <Banner />
       <Text style={styles.categories}>Categories</Text>
-      <CategoryCards></CategoryCards>
+      <CategoryCards />
       {items !== undefined && (
         <LegendList
           data={items}
