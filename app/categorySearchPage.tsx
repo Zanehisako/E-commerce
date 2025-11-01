@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import supabase from "./supabaseClient";
 
 export default function CategorySearchPage() {
-  const { name } = useLocalSearchParams()
+  const { name }: { name: string } = useLocalSearchParams()
   const [searchItems, setSearchItems] = useState<SearchItem[]>()
   const getItems = async () => {
-    const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").eq("category", name)
+    const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").eq("category", name.toLowerCase())
     if (itemsError) {
       alert(itemsError.message)
     } else {
