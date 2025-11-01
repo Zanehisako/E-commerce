@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
-import SearchPage, { SearchItem } from "./searchPage";
+import SearchResult, { SearchItem } from "./searchPage";
 import { useEffect, useState } from "react";
 import supabase from "./supabaseClient";
 
@@ -23,7 +23,7 @@ export default function CategorySearchPage() {
   return (
     <ScrollView>
       {searchItems &&
-        <SearchPage searchItems={searchItems} />
+        <SearchResult searchItems={searchItems} />
       }
     </ScrollView >
   )
