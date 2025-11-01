@@ -9,7 +9,8 @@ export default function SearchPage() {
   const [searchItems, setSearchItems] = useState<SearchItem[]>()
   const [query, setQuery] = useState<string>()
   const getItems = async (query: string) => {
-    const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").textSearch('name', `'${query}'`, { type: "websearch" })
+    //const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").textSearch('name', `'${query}'`, { type: "websearch" })
+    const { data: itemsData, error: itemsError } = await supabase.rpc('fuzzy_search_items', { query: query });
     if (itemsError) {
       alert(itemsError.message)
     } else {
