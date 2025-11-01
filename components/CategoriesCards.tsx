@@ -11,9 +11,9 @@ function CategoryCard({ name, iconName }: { name: string, iconName: keyof typeof
   return (
     <TouchableOpacity onPress={() => {
       router.navigate({
-        pathname: "/searchPage",
+        pathname: "/categorySearchPage",
         params: {
-          searchFunction: searchFunction()
+          name: name
         }
       })
     }}>
