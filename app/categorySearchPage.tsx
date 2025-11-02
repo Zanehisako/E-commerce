@@ -8,7 +8,8 @@ export default function CategorySearchPage() {
   const { name }: { name: string } = useLocalSearchParams()
   const [searchItems, setSearchItems] = useState<SearchItem[]>()
   const getItems = async () => {
-    const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").eq("category", name.toLowerCase())
+    console.log('category name:', name.trim().toLowerCase())
+    const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").eq("category", name.trim())
     if (itemsError) {
       alert(itemsError.message)
     } else {
