@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import SearchResult, { SearchItem } from "../searchPage";
 import { useEffect, useState } from "react";
 import supabase from "../supabaseClient";
@@ -7,7 +7,6 @@ import SearchBar from "@/components/SearchBar";
 
 export default function SearchPage() {
   const [searchItems, setSearchItems] = useState<SearchItem[]>()
-  const [query, setQuery] = useState<string>()
   const getItems = async (query: string) => {
     //const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").textSearch('name', `'${query}'`, { type: "websearch" })
     const { data: itemsData, error: itemsError } = await supabase.rpc('fuzzy_search_items', { query: query });
@@ -19,8 +18,11 @@ export default function SearchPage() {
       setSearchItems(items)
     }
   }
+  useEffect(() => {
+    console.log("search items changed");
+  }, [searchItems])
   return (
-    <ScrollView>
+    <ScrollView style={styles.main}>
       <SearchBar queryFunction={getItems} />
       {searchItems &&
         <SearchResult searchItems={searchItems} />
@@ -29,3 +31,10 @@ export default function SearchPage() {
   )
 
 }
+const styles = StyleSheet.create({
+  main: {
+    top: 50,
+    gap: 10,
+    padding: 10,
+  }
+})

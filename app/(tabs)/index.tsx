@@ -1,17 +1,32 @@
-import SearchBar from '@/components/SearchBar';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useEffect, useState } from 'react';
-import supabase from '../supabaseClient';
+import Banner from '@/components/Banner';
+import CategoryCards from '@/components/CategoriesCards';
 import ItemCard from '@/components/ItemCard';
 import Phone from '@/types/phone';
-import CategoryCards from '@/components/CategoriesCards';
-import { LegendList } from "@legendapp/list"
-import Banner from '@/components/Banner';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { LegendList } from "@legendapp/list";
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import supabase from '../supabaseClient';
+import SearchBar from '@/components/SearchBar';
+import SearchResult, { SearchItem } from "../searchPage";
 
 export default function HomeScreen() {
   const [items, setItems] = useState<Phone[]>()
+  const [searchItems, setSearchItems] = useState<SearchItem[]>()
+
+
+  const getSearchItems = async (query: string) => {
+    //const { data: itemsData, error: itemsError } = await supabase.from("items").select("*").textSearch('name', `'${query}'`, { type: "websearch" })
+    const { data: itemsData, error: itemsError } = await supabase.rpc('fuzzy_search_items', { query: query });
+    if (itemsError) {
+      alert(itemsError.message)
+    } else {
+      const items = itemsData as SearchItem[]
+      console.log("category search items results :", items)
+      setSearchItems(items)
+    }
+  }
 
   async function getItems() {
 
@@ -46,27 +61,29 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={{ gap: 15 }} style={styles.main}>
       <View style={styles.topBar}>
-        {/* <SearchBar /> */}
-        <Ionicons style={styles.carIcon} name='cart' size={20} onPress={
+        <SearchBar queryFunction={getSearchItems} />
+        <Ionicons style={styles.cartIcon} name='cart' size={20} onPress={
           () => router.push({
             pathname: "/cartPage",
           })
         } />
       </View>
-      <Banner />
-      <Text style={styles.categories}>Categories</Text>
-      <CategoryCards />
-      {items !== undefined && (
-        <LegendList
-          data={items}
-          renderItem={({ item }) => <ItemCard phone={item} />}
-          keyExtractor={(item) => `${item.id}`}
-          recycleItems
-          numColumns={2}
-          //style={styles.imagesHorizontallScroll}
-          contentContainerStyle={{ gap: 20 }}
-        ></LegendList>
-      )
+      {searchItems?.length !== 0 && searchItems ? (
+        <SearchResult searchItems={searchItems} />)
+        : items !== undefined && (<>
+          < Banner />
+          <Text style={styles.categories}>Categories</Text>
+          <CategoryCards />
+          <LegendList
+            data={items}
+            renderItem={({ item }) => <ItemCard phone={item} />}
+            keyExtractor={(item) => `${item.id}`}
+            recycleItems
+            numColumns={2}
+            contentContainerStyle={{ gap: 20 }}
+          ></LegendList>
+        </>
+        )
       }
     </ScrollView >
   );
@@ -94,8 +111,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold"
   },
-  carIcon: {
-    alignSelf: "center",
+  cartIcon: {
+    alignSelf: "flex-start",
     backgroundColor: "#EFF1F3",
     padding: 15,
     borderRadius: 30

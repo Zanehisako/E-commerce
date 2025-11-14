@@ -1,11 +1,10 @@
-import Banner from "@/components/Banner";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Image } from "expo-image"
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useEffect, useState } from "react";
-import supabase from "./supabaseClient";
-import { useLocalSearchParams } from "expo-router";
 import AnimatedButton from "@/components/AnimatedButton";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Image } from "expo-image";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import supabase from "./supabaseClient";
 
 export interface Item {
   name: string,
