@@ -1,12 +1,21 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack, useRouter } from 'expo-router';
-import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import supabase from './supabaseClient';
-import { useEffect, useState } from 'react';
+import { UserProfile } from '@/types/user';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Session } from '@supabase/supabase-js';
+import { Stack, useRouter } from 'expo-router';
+import { createContext, useEffect, useState } from 'react';
+import 'react-native-reanimated';
+import supabase from './supabaseClient';
 
 export default function RootLayout() {
+
+
+  const UserContext = createContext({
+    userProfile: undefined as UserProfile | undefined,
+    setUserProfile: (_: any) => { },
+  });
+
+  const [userProfile, setUserProfile] = useState<UserProfile>();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -28,6 +37,21 @@ export default function RootLayout() {
     };
   }, []);
 
+  const getUserProfile = async () => {
+    const { data, error } = await supabase.from('users').select('*').eq('id', session?.user.id).single();
+    if (error) {
+      alert("Error fetching user profile:" + error.message);
+    } else if (data) {
+      const userData = data as UserProfile;
+      console.log("Fetched user profile:", userData);
+      setUserProfile(userData);
+    }
+  }
+
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
   useEffect(() => {
     if (session === undefined) return; // still loading
     if (session?.user) {
@@ -38,11 +62,13 @@ export default function RootLayout() {
   }, [session]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName="(auth)">
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <UserContext.Provider value={{ userProfile, setUserProfile }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack initialRouteName="(auth)">
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </UserContext.Provider>
   );
 }
