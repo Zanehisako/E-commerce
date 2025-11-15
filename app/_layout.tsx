@@ -7,13 +7,15 @@ import { createContext, useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import supabase from './supabaseClient';
 
+
+export const UserContext = createContext({
+  userProfile: undefined as UserProfile | undefined,
+  setUserProfile: (_: any) => { },
+});
+
 export default function RootLayout() {
 
 
-  const UserContext = createContext({
-    userProfile: undefined as UserProfile | undefined,
-    setUserProfile: (_: any) => { },
-  });
 
   const [userProfile, setUserProfile] = useState<UserProfile>();
   const router = useRouter();
@@ -38,7 +40,9 @@ export default function RootLayout() {
   }, []);
 
   const getUserProfile = async () => {
-    const { data, error } = await supabase.from('users').select('*').eq('id', session?.user.id).single();
+    const user_id =  (await supabase.auth.getUser()).data.user?.id
+    console.log("user_id:",user_id)
+    const { data, error } = await supabase.from('users').select('*').eq('id',user_id ).single();
     if (error) {
       alert("Error fetching user profile:" + error.message);
     } else if (data) {
