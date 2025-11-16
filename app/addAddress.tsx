@@ -7,10 +7,11 @@ import supabase from "./supabaseClient";
 
 
 export default function AddAddressPage() {
-    const { userProfile} = useContext(UserContext);
+    const { userProfile } = useContext(UserContext);
     const [addressItems, setAddressItems] = useState<string[]>()
     const [modalVisible, setModalVisible] = useState(false);
     const [newAddress, setNewAddress] = useState("")
+    const [currentAddress, setCurrentAddress] = useState("")
 
     const getAddress = async () => {
         const { data, error } = await supabase.from('addresses').select('address').eq("user_id", userProfile?.id)
@@ -21,7 +22,7 @@ export default function AddAddressPage() {
             setAddressItems(addresses)
         }
     }
-    const deleteAddress = async(address:string)=>{
+    const deleteAddress = async (address: string) => {
         const { data, error } = await supabase.from('addresses').delete().eq("address", address).eq("user_id", userProfile?.id)
         if (error) {
             alert(error.message)
@@ -30,7 +31,7 @@ export default function AddAddressPage() {
         }
     }
 
-    const addAddress= async(address:string)=>{
+    const addAddress = async (address: string) => {
         const { data, error } = await supabase.from('addresses').insert({ user_id: userProfile?.id, address: address })
         if (error) {
             alert(error.message)
@@ -38,35 +39,43 @@ export default function AddAddressPage() {
             await getAddress()
         }
     }
+    const toggleSelect = (newSelectedAddress: string) => {
+        console.log("Toggling address to:", newSelectedAddress);
+        setCurrentAddress(newSelectedAddress)
+    }
 
     useEffect(() => {
         getAddress()
     }, [])
     useEffect(() => {
         console.log("Address", addressItems);
-    }, [addressItems !== undefined])
+    }, [addressItems])
+    useEffect(() => {
+        console.log("Current Address:", currentAddress);
+    }, [currentAddress])
 
     return (
         <View>
             <Modal
-            animationType="slide"
-            visible={modalVisible}
+                animationType="slide"
+                visible={modalVisible}
             >
                 <View style={styles.modal}>
                     <Text>New Address:</Text>
-                    <TextInput 
-                    style={{height: 40, borderColor: 'gray', borderWidth: 1, width:"100%", padding:10}}
-                    value={newAddress}
-                    onChangeText={setNewAddress}
+                    <TextInput
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: "100%", padding: 10 }}
+                        value={newAddress}
+                        onChangeText={setNewAddress}
                     />
-                    <View style={{flexDirection:"row",justifyContent:"space-around",width:"100%"}}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-around", width: "100%" }}>
                         <Button color="red" title="Close" onPress={() => setModalVisible(false)} />
-                        <Button title="Add" 
-                        onPress={async () => {
-                            if (newAddress!=="") {
-                            await addAddress(newAddress)
+                        <Button title="Add"
+                            onPress={async () => {
+                                if (newAddress !== "") {
+                                    await addAddress(newAddress)
+                                }
+                                setModalVisible(false)
                             }
-                            setModalVisible(false)}
                             } /> </View>
                 </View>
             </Modal>
@@ -74,10 +83,16 @@ export default function AddAddressPage() {
                 (
                     <LegendList
                         data={addressItems}
-                        renderItem={({ item }) => <Address address={item} deleteSelf={deleteAddress} />}
-                        keyExtractor={(item) => `${item}`}
+                        renderItem={({ item }) => <Address
+                            address={item}
+                            deleteSelf={deleteAddress}
+                            isSelected={item === currentAddress}
+                            toggleSelect={toggleSelect}
+                        />}
+                        keyExtractor={(item) => item}
                         numColumns={1}
                         contentContainerStyle={{ gap: 10 }}
+                        extraData={currentAddress}//extraData tells it:➡️ “Hey, rerender children when currentAddress changes.”
                     ></LegendList>
                 )}
             <Button onPress={() => setModalVisible(true)} title="Add new address" />
