@@ -18,6 +18,15 @@ export default function AddAddressPage() {
             setAddressItems(addresses)
         }
     }
+    const deleteAddress = async(address:string)=>{
+        const { data, error } = await supabase.from('addresses').delete().eq("address", address).eq("user_id", userProfile?.id)
+        if (error) {
+            alert(error.message)
+        } else {
+            await getAddress()
+        }
+    }
+
     useEffect(() => {
         getAddress()
     }, [])
@@ -31,7 +40,7 @@ export default function AddAddressPage() {
                 (
                     <LegendList
                         data={addressItems}
-                        renderItem={({ item }) => <Address address={item} />}
+                        renderItem={({ item }) => <Address address={item} deleteSelf={deleteAddress}/>}
                         keyExtractor={(item) => `${item}`}
                         numColumns={1}
                         contentContainerStyle={{ gap: 10 }}
