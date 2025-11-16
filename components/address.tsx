@@ -1,12 +1,13 @@
+import { AddressItem } from "@/app/addAddress";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Checkbox } from "expo-checkbox";
 import { Text, View } from "react-native";
 
 interface AddressProps {
-    address: string;
-    deleteSelf:(address:string)=>Promise<void>
+    address: AddressItem;
+    deleteSelf:(address:AddressItem)=>Promise<void>
     isSelected:boolean
-    toggleSelect:(newSelectedAddress:string)=>void
+    toggleSelect:(newSelectedAddress:AddressItem)=>void
 }
 
 export default function Address({ address,deleteSelf,isSelected,toggleSelect }: AddressProps) {
@@ -17,7 +18,12 @@ export default function Address({ address,deleteSelf,isSelected,toggleSelect }: 
             onValueChange={()=>toggleSelect(address)}
             color={isSelected?"blue":"#ccc"}
             />
-            <Text style={{ fontWeight: "bold" }}>{address}</Text>
+            <View>
+            <Text>{address.country}</Text>
+            <Text>{address.wilaya}</Text>
+            <Text style={{ fontWeight: "bold" }}>{address.address}</Text>
+            <Text style={{ fontWeight: "bold" }}>{address.zip_code}</Text>
+            </View>
             <Ionicons name="trash-bin" color={"red"} onPress={()=>deleteSelf(address)}></Ionicons>
         </View>
     )
