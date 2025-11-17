@@ -1,7 +1,9 @@
 import Banner from '@/components/Banner';
 import CategoryCards from '@/components/CategoriesCards';
+import ItemCard from '@/components/ItemCard';
 import Phone from '@/types/phone';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { LegendList } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -53,7 +55,7 @@ export default function HomeScreen() {
       <Banner />
       <Text style={styles.categories}>Categories</Text>
       <CategoryCards />
-      {/* {items !== undefined && (
+      {items !== undefined && (
         <LegendList
           data={items}
           renderItem={({ item }) => <ItemCard phone={item} />}
@@ -64,7 +66,7 @@ export default function HomeScreen() {
           contentContainerStyle={{ gap: 20 }}
         ></LegendList>
       )
-      } */}
+      }
     </ScrollView >
   );
 }

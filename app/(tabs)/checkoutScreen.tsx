@@ -52,21 +52,23 @@ export default function CheckoutScreen() {
     }, [userProfile])
 
     return (
-        <ScrollView >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
             <View style={styles.main}>
-                <Text style={{ fontWeight: "bold" }}>Shipping Address</Text>
-                <TouchableOpacity onPress={() => {
-                    router.push("/addAddress")
-                }}>
-                    <View>
-                        <Text>{currentAddress?.address}</Text>
-                        <View style={{ flexDirection: "row", gap: 10 }}>
-                            <Text>{currentAddress?.country}</Text>
-                            <Text>{currentAddress?.wilaya}</Text>
-                            <Text>{currentAddress?.zip_code}</Text>
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>Shipping Address</Text>
+                    <TouchableOpacity onPress={() => {
+                        router.push("/addAddress")
+                    }}>
+                        <View>
+                            <Text>{currentAddress?.address}</Text>
+                            <View style={{ flexDirection: "row", gap: 10 }}>
+                                <Text>{currentAddress?.country}</Text>
+                                <Text>{currentAddress?.wilaya}</Text>
+                                <Text>{currentAddress?.zip_code}</Text>
+                            </View>
                         </View>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
                 <View>
                     <Text style={{ fontWeight: "bold" }}>Shipping Method</Text>
                     <View>
@@ -90,39 +92,44 @@ export default function CheckoutScreen() {
                 </View>
                 <View>
                     <Text style={{ fontWeight: "bold" }}>Payment method</Text>
-                <TouchableOpacity onPress={() => {
-                    //router.push("/addAddress")
-                    alert("Change payment method feature coming soon!")
-                }}>
-                    <View style={{ flexDirection: "row", gap: 10 }}>
-                        <Text>{userProfile?.payment_method}</Text>
-                        <Ionicons name="arrow-forward-outline" />
-                    </View>
-                </TouchableOpacity>
-                </View>
-                <View>
-                    <Text style={{ fontWeight: "bold" }}>Total</Text>
-                    {item && cartItem && (
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text>${item.price} x {cartItem.count} items</Text>
-                            <Text>${item.price * cartItem.count}</Text>
+                    <TouchableOpacity onPress={() => {
+                        //router.push("/addAddress")
+                        alert("Change payment method feature coming soon!")
+                    }}>
+                        <View style={{ flexDirection: "row", gap: 10 }}>
+                            <Text>{userProfile?.payment_method}</Text>
+                            <Ionicons name="arrow-forward-outline" />
                         </View>
-                    )}
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center" }} onPress={() => {
-                    alert("Order placed successfully!")
-                }}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>Place Order</Text>
-                </TouchableOpacity>
+                {/* This is the container for the button that will be pushed to the bottom */}
+                <View style={styles.bottomContainer}>
+                    <View>
+                        <Text style={{ fontWeight: "bold" }}>Total</Text>
+                        {item && cartItem && (
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text>${item.price} x {cartItem.count} items</Text>
+                                <Text>${item.price * cartItem.count}</Text>
+                            </View>
+                        )}
+                    </View>
+                    <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 }} onPress={() => {
+                        alert("Order placed successfully!")
+                    }}>
+                        <Text style={{ color: "white", fontWeight: "bold" }}>Place Order</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </ScrollView>
     )
 }
 const styles = StyleSheet.create({
     main: {
+        flex: 1, // This makes the view take up the full screen height
         top: 50,
         padding: 15,
-        gap: 15,
+        gap: 20, // Increased gap for better spacing
+        flexDirection: 'column', // Ensures children are laid out vertically
     },
     input: {
         height: 40,
@@ -132,4 +139,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     image: { borderRadius: 20, height: 100, width: 100 },
+    bottomContainer: {
+        marginTop: 'auto', // This pushes the container to the bottom
+    }
 })
