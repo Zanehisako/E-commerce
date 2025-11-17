@@ -1,14 +1,37 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { UserContext } from "../_layout";
 import { AddressItem } from "../addAddress";
+import { CartItem } from "../cartPage";
+import { Item } from "../itemPage";
 import supabase from "../supabaseClient";
 
 
 export default function CheckoutScreen() {
     const { userProfile } = useContext(UserContext);
     const [currentAddress, setCurrentAddress] = useState<AddressItem>()
+    const [item, setItem] = useState<Item>()
+    const [cartItem, setCartItem] = useState<CartItem>()
+    const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
+    const [paymentMethod, setPaymentMethod] = useState<string>("")
+
+    const getItem = async () => {
+        const { data, error } = await supabase.from('cart_items').select("*").eq("id", cartItemId).limit(1).single()
+        if (error) {
+            alert(error.message)
+        } else if (data) {
+            setCartItem(data)
+            const { data: itemData, error: itemError } = await supabase.from('items').select("*").eq("id", data.item_id).limit(1).single()
+            if (itemError) {
+                alert(itemError.message)
+            } else if (itemData) {
+                setItem(itemData)
+            }
+        }
+    }
 
     const getCurrentAddress = async () => {
         console.log(`Fetching current address ${userProfile?.address}...`);
@@ -20,6 +43,7 @@ export default function CheckoutScreen() {
         }
     }
     useEffect(() => {
+        getItem()
         getCurrentAddress()
     }, [])
 
@@ -28,8 +52,8 @@ export default function CheckoutScreen() {
     }, [userProfile])
 
     return (
-        <ScrollView style={styles.main}>
-            <View>
+        <ScrollView >
+            <View style={styles.main}>
                 <Text style={{ fontWeight: "bold" }}>Shipping Address</Text>
                 <TouchableOpacity onPress={() => {
                     router.push("/addAddress")
@@ -42,6 +66,53 @@ export default function CheckoutScreen() {
                             <Text>{currentAddress?.zip_code}</Text>
                         </View>
                     </View>
+                </TouchableOpacity>
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>Shipping Method</Text>
+                    <View>
+                        <Text>Standard Shipping - Free</Text>
+                        <Text>Estimated delivery: 5-7 business days</Text>
+                    </View>
+                </View>
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>Items'details</Text>
+                    {item && cartItem && (
+                        <View>
+                            <Image style={styles.image} source={{ uri: item?.url }} />
+                            <Text>{item?.name}</Text>
+                            <Text>${item?.price}</Text>
+                            <View style={{ flexDirection: "row", gap: 5 }}>
+                                <Text>count:</Text>
+                                <Text>{cartItem?.count}</Text>
+                            </View>
+                        </View>
+                    )}
+                </View>
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>Payment method</Text>
+                <TouchableOpacity onPress={() => {
+                    //router.push("/addAddress")
+                    alert("Change payment method feature coming soon!")
+                }}>
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                        <Text>{userProfile?.payment_method}</Text>
+                        <Ionicons name="arrow-forward-outline" />
+                    </View>
+                </TouchableOpacity>
+                </View>
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>Total</Text>
+                    {item && cartItem && (
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text>${item.price} x {cartItem.count} items</Text>
+                            <Text>${item.price * cartItem.count}</Text>
+                        </View>
+                    )}
+                </View>
+                <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center" }} onPress={() => {
+                    alert("Order placed successfully!")
+                }}>
+                    <Text style={{ color: "white", fontWeight: "bold" }}>Place Order</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -59,5 +130,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         padding: 10,
-    }
+    },
+    image: { borderRadius: 20, height: 100, width: 100 },
 })
