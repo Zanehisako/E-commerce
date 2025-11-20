@@ -2,7 +2,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { RadioButton } from "react-native-paper";
 import { UserContext } from "../_layout";
 import { AddressItem } from "../addAddress";
 import { CartItem } from "../cartPage";
@@ -17,6 +18,8 @@ export default function CheckoutScreen() {
     const [cartItem, setCartItem] = useState<CartItem>()
     const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
     const [paymentMethod, setPaymentMethod] = useState<string>("")
+    const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
+    const [checked, setChecked] = useState<string>('first');
 
     const getItem = async () => {
         const { data, error } = await supabase.from('cart_items').select("*").eq("id", cartItemId).limit(1).single()
@@ -90,11 +93,32 @@ export default function CheckoutScreen() {
                         </View>
                     )}
                 </View>
+                <Modal 
+                presentationStyle="pageSheet"
+                onRequestClose={()=>setAddPaymentMethodVisible(false)}
+                allowSwipeDismissal={true}
+                visible={addPaymentVisible}
+                    animationType="slide" >
+                    <View style={styles.main}>
+                        <Text>New payment:</Text>
+                        <Text>Please select a payment method:</Text>
+
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <RadioButton
+                                value={checked}
+                                status={checked === 'first' ? 'checked' : 'unchecked'}
+                                onPress={() => setChecked('first')}
+                            />
+                            <Text>Credit Card</Text>
+                            <Button title="Close" onPress={() => setAddPaymentMethodVisible(false)}></Button>
+                        </View>
+                    </View>
+                </Modal>
                 <View>
                     <Text style={{ fontWeight: "bold" }}>Payment method</Text>
                     <TouchableOpacity onPress={() => {
-                        //router.push("/addAddress")
-                        alert("Change payment method feature coming soon!")
+                        //router.push("/addPaymentMethod")
+                        setAddPaymentMethodVisible(true)
                     }}>
                         <View style={{ flexDirection: "row", gap: 10 }}>
                             <Text>{userProfile?.payment_method}</Text>
