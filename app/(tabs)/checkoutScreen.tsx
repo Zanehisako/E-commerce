@@ -13,41 +13,52 @@ import supabase from "../supabaseClient";
 
 
 export default function CheckoutScreen() {
-    const { userProfile,setUserProfile } = useContext(UserContext);
+    const { userProfile, setUserProfile } = useContext(UserContext);
     const [currentAddress, setCurrentAddress] = useState<AddressItem>()
-    const [item, setItem] = useState<Item>()
-    const [cartItem, setCartItem] = useState<CartItem>()
+    const [items, setItems] = useState<Item[]>()
+    const [cartItems, setCartItems] = useState<CartItem[]>()
     const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
     const [paymentMethod, setPaymentMethod] = useState<string>("PayPal")
     const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
-    const [checked, setChecked] = useState<string>('first');
+    const items_count = cartItems?.reduce((total, item) => total + item.count, 0);
+    var total_price = 0;
 
-  const getUserProfile = async () => {
-    const user_id =  (await supabase.auth.getUser()).data.user?.id
-    console.log("user_id:",user_id)
-    const { data, error } = await supabase.from('users').select('*').eq('id',user_id ).single();
-    if (error) {
-      alert("Error fetching user profile:" + error.message);
-    } else if (data) {
-      const userData = data as UserProfile;
-      console.log("Fetched user profile:", userData);
-      setUserProfile(userData);
+    const getUserProfile = async () => {
+        const user_id = (await supabase.auth.getUser()).data.user?.id
+        console.log("user_id:", user_id)
+        const { data, error } = await supabase.from('users').select('*').eq('id', user_id).single();
+        if (error) {
+            alert("Error fetching user profile:" + error.message);
+        } else if (data) {
+            const userData = data as UserProfile;
+            console.log("Fetched user profile:", userData);
+            setUserProfile(userData);
+        }
     }
-  }
 
-    const getItem = async () => {
-        const { data, error } = await supabase.from('cart_items').select("*").eq("id", cartItemId).limit(1).single()
+    const getCartItems = async () => {
+        const { data, error } = await supabase.from('cart_items').select("*").eq("id", cartItemId)
         if (error) {
             alert(error.message)
         } else if (data) {
-            setCartItem(data)
-            const { data: itemData, error: itemError } = await supabase.from('items').select("*").eq("id", data.item_id).limit(1).single()
-            if (itemError) {
-                alert(itemError.message)
-            } else if (itemData) {
-                setItem(itemData)
+            setCartItems(data)
+        }
+    }
+    const getItems = async () => {
+        var items = []
+        for (let i = 0; i < (cartItems?.length || 0); i++) {
+            const cartItem = cartItems?.[i];
+            if (cartItem) {
+                const { data: itemData, error: itemError } = await supabase.from('items').select("*").eq("id", cartItem.item_id).limit(1).single()
+                if (itemError) {
+                    alert(itemError.message)
+                } else if (itemData) {
+                    items.push(itemData)
+                    total_price += itemData.price * cartItem.count;
+                }
             }
         }
+        setItems(items)
     }
 
     const getCurrentAddress = async () => {
@@ -59,19 +70,38 @@ export default function CheckoutScreen() {
             setCurrentAddress(data)
         }
     }
-    const updatePayment = async()=>{
-        const {error} = await supabase.from("users").update({payment_method:paymentMethod}).eq("id",userProfile?.id)
-        if(error){
+    const updatePayment = async () => {
+        const { error } = await supabase.from("users").update({ payment_method: paymentMethod }).eq("id", userProfile?.id)
+        if (error) {
             alert(error.message)
-        }else{
+        } else {
             alert("Payment method updated successfully")
-            await getUserProfile() 
+            await getUserProfile()
+        }
+    }
+    const addOrder = async () => {
+        const { data, error } = await supabase.from("orders").insert({
+            user_id: userProfile?.id,
+            cart_items: cartItems?.map((item) => item.id),
+            count: items_count,
+            total_price: total_price,
+            address_id: currentAddress?.id,
+            payment_method: paymentMethod,
+        }).select().single()
+        if (error) {
+            alert(error.message)
+        } else if (data) {
+            alert("Order placed successfully")
         }
     }
     useEffect(() => {
-        getItem()
+        getCartItems()
         getCurrentAddress()
     }, [])
+
+    useEffect(() => {
+        getItems()
+    }, [cartItems])
 
     useEffect(() => {
         getCurrentAddress()
@@ -108,23 +138,37 @@ export default function CheckoutScreen() {
                 </View>
                 <View>
                     <Text style={{ fontWeight: "bold" }}>Items'details</Text>
-                    {item && cartItem && (
-                        <View>
-                            <Image style={styles.image} source={{ uri: item?.url }} />
-                            <Text>{item?.name}</Text>
-                            <Text>${item?.price}</Text>
+                    {items && cartItems && (
+                        <View style={{ gap: 10 }}>
+                            {items.map((item, index) => {
+                                const cartItem = cartItems.find(ci => ci.item_id === item.id);
+                                return (
+                                    <View key={item.id} >
+                                        <Image style={styles.image} source={{ uri: item.url }} />
+                                        <View>
+                                            <Text>{item.name}</Text>
+                                            <View style={{ flexDirection: "row", gap: 5 }}>
+                                                <Text>${item.price}</Text>
+                                            <View style={{ flexDirection: "row", gap: 5 }}>
+                                                <Text>count:</Text>
+                                                <Text>{cartItem?.count}</Text>
+                                            </View>
+                                            </View>
+                                        </View>
+                                    </View>)
+                            })}
                             <View style={{ flexDirection: "row", gap: 5 }}>
-                                <Text>count:</Text>
-                                <Text>{cartItem?.count}</Text>
+                                <Text style={{fontWeight:"bold"}}>total count:</Text>
+                                <Text>{items_count}</Text>
                             </View>
                         </View>
                     )}
                 </View>
-                <Modal 
-                presentationStyle="pageSheet"
-                onRequestClose={()=>setAddPaymentMethodVisible(false)}
-                allowSwipeDismissal={true}
-                visible={addPaymentVisible}
+                <Modal
+                    presentationStyle="pageSheet"
+                    onRequestClose={() => setAddPaymentMethodVisible(false)}
+                    allowSwipeDismissal={true}
+                    visible={addPaymentVisible}
                     animationType="slide" >
                     <View style={styles.main}>
                         <Text>New payment:</Text>
@@ -132,35 +176,35 @@ export default function CheckoutScreen() {
 
                         <View style={styles.radiobutton}>
                             <RadioButton
-                                checked={paymentMethod==="Credit Card"}
+                                checked={paymentMethod === "Credit Card"}
                                 onPress={() => setPaymentMethod("Credit Card")}
                             />
-                            <View style={{flexDirection:"row",alignItems:"center",}}>
-                            <Ionicons name="card-outline" size={24} color="black" />
-                            <Text>Credit Card</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", }}>
+                                <Ionicons name="card-outline" size={24} color="black" />
+                                <Text>Credit Card</Text>
                             </View>
                         </View>
 
                         <View style={styles.radiobutton}>
                             <RadioButton
-                                checked={paymentMethod==="PayPal"}
+                                checked={paymentMethod === "PayPal"}
                                 onPress={() => setPaymentMethod("PayPal")}
                             />
 
-                            <View style={{flexDirection:"row",alignItems:"center",}}>
-                            <Ionicons name="logo-paypal" size={24} color="black" />
-                            <Text>PayPal</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", }}>
+                                <Ionicons name="logo-paypal" size={24} color="black" />
+                                <Text>PayPal</Text>
                             </View>
                         </View>
 
                         <View style={styles.radiobutton}>
                             <RadioButton
-                                checked={paymentMethod==="Google Pay"}
+                                checked={paymentMethod === "Google Pay"}
                                 onPress={() => setPaymentMethod("Google Pay")}
                             />
-                            <View style={{flexDirection:"row",alignItems:"center",}}>
-                            <Ionicons name="logo-google" size={24} color="black" />
-                            <Text>Google Pay</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", }}>
+                                <Ionicons name="logo-google" size={24} color="black" />
+                                <Text>Google Pay</Text>
                             </View>
                         </View>
                         <Button title="Close" onPress={() => setAddPaymentMethodVisible(false)}></Button>
@@ -182,12 +226,14 @@ export default function CheckoutScreen() {
                 <View style={styles.bottomContainer}>
                     <View>
                         <Text style={{ fontWeight: "bold" }}>Total</Text>
-                        {item && cartItem && (
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text>${item.price} x {cartItem.count} items</Text>
-                                <Text>${item.price * cartItem.count}</Text>
-                            </View>
-                        )}
+                        {items && cartItems && items.map((item, index) => {
+                            const cartItem = cartItems.find(ci => ci.id === item.id);
+                            return (
+                                <View key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                                    <Text>${item.price}x {cartItem?.count}</Text>
+                                    <Text>${cartItem && item.price * cartItem?.count}</Text>
+                                </View>)
+                        })}
                     </View>
                     <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 }} onPress={() => {
                         alert("Order placed successfully!")
@@ -219,5 +265,5 @@ const styles = StyleSheet.create({
         marginTop: 'auto', // This pushes the container to the bottom
         marginBottom: 50, // Optional: adds some space from the bottom of the screen
     },
-    radiobutton:{ flexDirection: "row", alignItems: "center",gap:5 }
+    radiobutton: { flexDirection: "row", alignItems: "center", gap: 5 }
 })

@@ -1,10 +1,9 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useEffect, useState } from "react";
-import supabase from "./supabaseClient";
-import { useLocalSearchParams } from "expo-router";
 import CartItemCard from "@/components/CartItemCard";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import supabase from "./supabaseClient";
 
-import { LegendList } from "@legendapp/list"
+import { LegendList } from "@legendapp/list";
 
 
 
@@ -19,6 +18,7 @@ interface cartItemDB {
 export interface CartItem {
   id: string,
   name: string,
+  item_id: string,
   url: string,
   price: number,
   count: number,

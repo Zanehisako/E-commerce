@@ -7,6 +7,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import supabase from "./supabaseClient";
 
 export interface Item {
+  id:string,
   name: string,
   category: string,
   description: string,
