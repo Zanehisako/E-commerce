@@ -224,13 +224,13 @@ export default function CheckoutScreen() {
                 </View>
                 {/* This is the container for the button that will be pushed to the bottom */}
                 <View style={styles.bottomContainer}>
-                    <View>
+                    <View style={{gap:10}}>
                         <Text style={{ fontWeight: "bold" }}>Total</Text>
                         {items && cartItems && items.map((item, index) => {
-                            const cartItem = cartItems.find(ci => ci.id === item.id);
+                            const cartItem = cartItems.find(ci => ci.item_id === item.id);
                             return (
-                                <View key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                                    <Text>${item.price}x {cartItem?.count}</Text>
+                                <View key={item.id} style={{ flexDirection: "row", alignItems: "center",justifyContent:"space-between", gap: 10, marginBottom: 10 }}>
+                                    <Text>${item.price} x {cartItem?.count}</Text>
                                     <Text>${cartItem && item.price * cartItem?.count}</Text>
                                 </View>)
                         })}
