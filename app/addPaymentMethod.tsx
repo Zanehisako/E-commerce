@@ -1,6 +1,6 @@
+import RadioButton from "@/components/RadioButton";
 import { useState } from "react";
 import { Modal, StyleSheet, Text, View } from "react-native";
-import { RadioButton } from 'react-native-paper';
 
 
 export interface PaymentItem {
@@ -14,7 +14,7 @@ export interface PaymentItem {
 }
 
 export default function AddPaymentPage() {
-      const [checked, setChecked] = useState<string>('first');
+      const [checked, setChecked] = useState(false);
     //     const { userProfile,setUserProfile } = useContext(UserContext);
     //     const [paymentItems, setpaymentItems] = useState<string[]>()
     //     const [modalVisible, setModalVisible] = useState(false);
@@ -84,9 +84,8 @@ export default function AddPaymentPage() {
 
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <RadioButton
-                        value={checked}
-                        status={checked === 'first' ? 'checked' : 'unchecked'}
-                        onPress={() => setChecked('first')}
+                        checked={checked}
+                        onPress={() => setChecked(!checked)}
                     />
                     <Text>Credit Card</Text>
                 </View>

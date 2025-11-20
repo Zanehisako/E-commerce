@@ -1,9 +1,9 @@
+import RadioButton from "@/components/RadioButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { RadioButton } from "react-native-paper";
 import { UserContext } from "../_layout";
 import { AddressItem } from "../addAddress";
 import { CartItem } from "../cartPage";
@@ -17,7 +17,7 @@ export default function CheckoutScreen() {
     const [item, setItem] = useState<Item>()
     const [cartItem, setCartItem] = useState<CartItem>()
     const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
-    const [paymentMethod, setPaymentMethod] = useState<string>("")
+    const [paymentMethod, setPaymentMethod] = useState<string>("PayPal")
     const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
     const [checked, setChecked] = useState<string>('first');
 
@@ -103,15 +103,40 @@ export default function CheckoutScreen() {
                         <Text>New payment:</Text>
                         <Text>Please select a payment method:</Text>
 
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <View style={styles.radiobutton}>
                             <RadioButton
-                                value={checked}
-                                status={checked === 'first' ? 'checked' : 'unchecked'}
-                                onPress={() => setChecked('first')}
+                                checked={paymentMethod==="Credit Card"}
+                                onPress={() => setPaymentMethod("Credit Card")}
                             />
+                            <View style={{flexDirection:"row",alignItems:"center",}}>
+                            <Ionicons name="card-outline" size={24} color="black" />
                             <Text>Credit Card</Text>
-                            <Button title="Close" onPress={() => setAddPaymentMethodVisible(false)}></Button>
+                            </View>
                         </View>
+
+                        <View style={styles.radiobutton}>
+                            <RadioButton
+                                checked={paymentMethod==="PayPal"}
+                                onPress={() => setPaymentMethod("PayPal")}
+                            />
+
+                            <View style={{flexDirection:"row",alignItems:"center",}}>
+                            <Ionicons name="logo-paypal" size={24} color="black" />
+                            <Text>PayPal</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.radiobutton}>
+                            <RadioButton
+                                checked={paymentMethod==="Google Pay"}
+                                onPress={() => setPaymentMethod("Google Pay")}
+                            />
+                            <View style={{flexDirection:"row",alignItems:"center",}}>
+                            <Ionicons name="logo-google" size={24} color="black" />
+                            <Text>Google Pay</Text>
+                            </View>
+                        </View>
+                        <Button title="Close" onPress={() => setAddPaymentMethodVisible(false)}></Button>
                     </View>
                 </Modal>
                 <View>
@@ -166,5 +191,6 @@ const styles = StyleSheet.create({
     bottomContainer: {
         marginTop: 'auto', // This pushes the container to the bottom
         marginBottom: 50, // Optional: adds some space from the bottom of the screen
-    }
+    },
+    radiobutton:{ flexDirection: "row", alignItems: "center",gap:5 }
 })
