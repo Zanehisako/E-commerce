@@ -20,8 +20,8 @@ export default function CheckoutScreen() {
     const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
     const [paymentMethod, setPaymentMethod] = useState<string>("PayPal")
     const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
+    const [totalPrice,setTotalPrice] = useState(0.0);
     const items_count = cartItems?.reduce((total, item) => total + item.count, 0);
-    var total_price = 0;
 
     const getUserProfile = async () => {
         const user_id = (await supabase.auth.getUser()).data.user?.id
@@ -46,6 +46,7 @@ export default function CheckoutScreen() {
     }
     const getItems = async () => {
         var items = []
+        var total_price = 0.0;
         for (let i = 0; i < (cartItems?.length || 0); i++) {
             const cartItem = cartItems?.[i];
             if (cartItem) {
@@ -54,10 +55,11 @@ export default function CheckoutScreen() {
                     alert(itemError.message)
                 } else if (itemData) {
                     items.push(itemData)
-                    total_price += itemData.price * cartItem.count;
+                    total_price += (itemData.price * cartItem.count);
                 }
             }
         }
+        setTotalPrice(total_price)
         setItems(items)
     }
 
@@ -80,14 +82,15 @@ export default function CheckoutScreen() {
         }
     }
     const addOrder = async () => {
+        console.log(`Placing order...`);
         const { data, error } = await supabase.from("orders").insert({
             user_id: userProfile?.id,
             cart_items: cartItems?.map((item) => item.id),
             count: items_count,
-            total_price: total_price,
+            price: totalPrice,
             address_id: currentAddress?.id,
             payment_method: paymentMethod,
-        }).select().single()
+        })
         if (error) {
             alert(error.message)
         } else if (data) {
@@ -231,12 +234,13 @@ export default function CheckoutScreen() {
                             return (
                                 <View key={item.id} style={{ flexDirection: "row", alignItems: "center",justifyContent:"space-between", gap: 10, marginBottom: 10 }}>
                                     <Text>${item.price} x {cartItem?.count}</Text>
-                                    <Text>${cartItem && item.price * cartItem?.count}</Text>
+                                    <Text>${totalPrice}</Text>
                                 </View>)
                         })}
                     </View>
-                    <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 }} onPress={() => {
-                        alert("Order placed successfully!")
+                    <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 }} onPress={async () => {
+                        await addOrder()
+                        alert("Order placed successfully")
                     }}>
                         <Text style={{ color: "white", fontWeight: "bold" }}>Place Order</Text>
                     </TouchableOpacity>
