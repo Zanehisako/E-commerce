@@ -1,4 +1,5 @@
 import RadioButton from "@/components/RadioButton";
+import { UserProfile } from "@/types/user";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -12,7 +13,7 @@ import supabase from "../supabaseClient";
 
 
 export default function CheckoutScreen() {
-    const { userProfile } = useContext(UserContext);
+    const { userProfile,setUserProfile } = useContext(UserContext);
     const [currentAddress, setCurrentAddress] = useState<AddressItem>()
     const [item, setItem] = useState<Item>()
     const [cartItem, setCartItem] = useState<CartItem>()
@@ -20,6 +21,19 @@ export default function CheckoutScreen() {
     const [paymentMethod, setPaymentMethod] = useState<string>("PayPal")
     const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
     const [checked, setChecked] = useState<string>('first');
+
+  const getUserProfile = async () => {
+    const user_id =  (await supabase.auth.getUser()).data.user?.id
+    console.log("user_id:",user_id)
+    const { data, error } = await supabase.from('users').select('*').eq('id',user_id ).single();
+    if (error) {
+      alert("Error fetching user profile:" + error.message);
+    } else if (data) {
+      const userData = data as UserProfile;
+      console.log("Fetched user profile:", userData);
+      setUserProfile(userData);
+    }
+  }
 
     const getItem = async () => {
         const { data, error } = await supabase.from('cart_items').select("*").eq("id", cartItemId).limit(1).single()
@@ -45,6 +59,15 @@ export default function CheckoutScreen() {
             setCurrentAddress(data)
         }
     }
+    const updatePayment = async()=>{
+        const {error} = await supabase.from("users").update({payment_method:paymentMethod}).eq("id",userProfile?.id)
+        if(error){
+            alert(error.message)
+        }else{
+            alert("Payment method updated successfully")
+            await getUserProfile() 
+        }
+    }
     useEffect(() => {
         getItem()
         getCurrentAddress()
@@ -53,6 +76,10 @@ export default function CheckoutScreen() {
     useEffect(() => {
         getCurrentAddress()
     }, [userProfile])
+
+    useEffect(() => {
+        updatePayment()
+    }, [paymentMethod])
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} >
