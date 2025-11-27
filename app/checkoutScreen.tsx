@@ -94,9 +94,13 @@ export default function CheckoutScreen() {
         })
         if (error) {
             alert(error.message)
-        } else if (data) {
+        } else {
+            console.log("Order placed:", data)
+            console.log("Deleting cart items...", cartItems)
             if (cartItems) {
-                const { data, error } = await supabase.from("cart_items").delete().in("id", cartItems?.map((item) => item.id))
+                const ids = cartItems?.map((item) => item.id)
+                console.log("Deleting cart items with ids:", ids)
+                const { data, error } = await supabase.from("cart_items").delete().in("id", ids)
                 if (error) {
                     alert(error.message)
                 } else {
@@ -249,7 +253,6 @@ export default function CheckoutScreen() {
                     </View>
                     <TouchableOpacity style={{ backgroundColor: "blue", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 }} onPress={async () => {
                         await addOrder()
-                        alert("Order placed successfully")
                     }}>
                         <Text style={{ color: "white", fontWeight: "bold" }}>Place Order</Text>
                     </TouchableOpacity>
