@@ -1,13 +1,13 @@
 import AnimatedButton from "@/components/AnimatedButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import supabase from "./supabaseClient";
 
 export interface Item {
-  id:string,
+  id: string,
   name: string,
   category: string,
   description: string,
@@ -86,7 +86,28 @@ export default function ItemPage() {
           <Text style={styles.bigText}>Description:</Text>
           <Text style={styles.smallText}>{item.description}</Text>
           <View style={{ gap: 10, flexDirection: "row", justifyContent: "center" }}>
-            <AnimatedButton style={{ backgroundColor: "blue" }} text="Buy Now" onPress={() => { }} />
+            <AnimatedButton style={{ backgroundColor: "blue" }} text="Buy Now" onPress={async () => {
+              const { data: insertData, error } = await supabase.from("cart_items").insert({ item_id: id, count: 1 })
+              if (error) {
+                alert(`error adding to cart:\n${error.message}`);
+              }
+              else {
+                const { data: cartItemData, error } = await supabase.from("cart_items").select("id").eq("item_id", id).single()
+                if (error) {
+                  alert(`error getting cart item id:\n${error.message}`);
+                } else {
+
+                  const cartItemId = cartItemData.id
+                  console.log("cartItemId:", cartItemId)
+
+                  router.push({
+                    pathname: "/checkoutScreen", params: {
+                      cartItemId: cartItemId,
+                    }
+                  })
+                }
+              }
+            }} />
             <AnimatedButton style={{ backgroundColor: "grey" }} text="Add to cart" onPress={async () => { await addToCart() }} />
           </View>
         </ScrollView >}

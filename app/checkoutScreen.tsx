@@ -2,14 +2,14 @@ import RadioButton from "@/components/RadioButton";
 import { UserProfile } from "@/types/user";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { UserContext } from "../_layout";
-import { AddressItem } from "../addAddress";
-import { CartItem } from "../cartPage";
-import { Item } from "../itemPage";
-import supabase from "../supabaseClient";
+import { UserContext } from "./_layout";
+import { AddressItem } from "./addAddress";
+import { CartItem } from "./cartPage";
+import { Item } from "./itemPage";
+import supabase from "./supabaseClient";
 
 
 export default function CheckoutScreen() {
@@ -17,11 +17,12 @@ export default function CheckoutScreen() {
     const [currentAddress, setCurrentAddress] = useState<AddressItem>()
     const [items, setItems] = useState<Item[]>()
     const [cartItems, setCartItems] = useState<CartItem[]>()
-    const cartItemId = "802cda27-6fc6-495c-b528-120c4fda23e1"
     const [paymentMethod, setPaymentMethod] = useState<string>("PayPal")
     const [addPaymentVisible, setAddPaymentMethodVisible] = useState<boolean>(false)
-    const [totalPrice,setTotalPrice] = useState(0.0);
+    const [totalPrice, setTotalPrice] = useState(0.0);
     const items_count = cartItems?.reduce((total, item) => total + item.count, 0);
+    const params = useLocalSearchParams();
+    const { cartItemId } = params; // Destructure the parameters you expect
 
     const getUserProfile = async () => {
         const user_id = (await supabase.auth.getUser()).data.user?.id
@@ -98,6 +99,7 @@ export default function CheckoutScreen() {
         }
     }
     useEffect(() => {
+        console.log("id", cartItemId)
         getCartItems()
         getCurrentAddress()
     }, [])
@@ -152,16 +154,16 @@ export default function CheckoutScreen() {
                                             <Text>{item.name}</Text>
                                             <View style={{ flexDirection: "row", gap: 5 }}>
                                                 <Text>${item.price}</Text>
-                                            <View style={{ flexDirection: "row", gap: 5 }}>
-                                                <Text>count:</Text>
-                                                <Text>{cartItem?.count}</Text>
-                                            </View>
+                                                <View style={{ flexDirection: "row", gap: 5 }}>
+                                                    <Text>count:</Text>
+                                                    <Text>{cartItem?.count}</Text>
+                                                </View>
                                             </View>
                                         </View>
                                     </View>)
                             })}
                             <View style={{ flexDirection: "row", gap: 5 }}>
-                                <Text style={{fontWeight:"bold"}}>total count:</Text>
+                                <Text style={{ fontWeight: "bold" }}>total count:</Text>
                                 <Text>{items_count}</Text>
                             </View>
                         </View>
@@ -227,12 +229,12 @@ export default function CheckoutScreen() {
                 </View>
                 {/* This is the container for the button that will be pushed to the bottom */}
                 <View style={styles.bottomContainer}>
-                    <View style={{gap:10}}>
+                    <View style={{ gap: 10 }}>
                         <Text style={{ fontWeight: "bold" }}>Total</Text>
                         {items && cartItems && items.map((item, index) => {
                             const cartItem = cartItems.find(ci => ci.item_id === item.id);
                             return (
-                                <View key={item.id} style={{ flexDirection: "row", alignItems: "center",justifyContent:"space-between", gap: 10, marginBottom: 10 }}>
+                                <View key={item.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
                                     <Text>${item.price} x {cartItem?.count}</Text>
                                     <Text>${totalPrice}</Text>
                                 </View>)
