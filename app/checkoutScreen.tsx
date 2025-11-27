@@ -95,7 +95,14 @@ export default function CheckoutScreen() {
         if (error) {
             alert(error.message)
         } else if (data) {
-            alert("Order placed successfully")
+            if (cartItems) {
+                const { data, error } = await supabase.from("cart_items").delete().in("id", cartItems?.map((item) => item.id))
+                if (error) {
+                    alert(error.message)
+                } else {
+                    alert("Order placed successfully")
+                }
+            }
         }
     }
     useEffect(() => {

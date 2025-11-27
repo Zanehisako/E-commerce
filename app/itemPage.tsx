@@ -2,8 +2,9 @@ import AnimatedButton from "@/components/AnimatedButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { UserContext } from "./_layout";
 import supabase from "./supabaseClient";
 
 export interface Item {
@@ -25,6 +26,7 @@ export default function ItemPage() {
   const id = params.id
   const [item, setItem] = useState<Item>()
 
+  const { userProfile, setUserProfile } = useContext(UserContext);
   const getItem = async () => {
     try {
       console.log(`Getting details for id ${id}...`,)
@@ -47,13 +49,8 @@ export default function ItemPage() {
     try {
       console.log(`adding item to cart`,)
 
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      if (userError) {
-        alert(userError)
-      }
-      const user_id = userData.user?.id
 
-      const { data: cartData, error: cartError } = await supabase.from('cart_items').insert({ item_id: id, count: 1, user_id: user_id })
+      const { data: cartData, error: cartError } = await supabase.from('cart_items').insert({ item_id: id, count: 1, user_id: userProfile?.id })
       if (cartError) { console.log("cartError:", cartError); throw cartError }
       console.log(`done adding item ${id} to cart`)
 
@@ -87,7 +84,8 @@ export default function ItemPage() {
           <Text style={styles.smallText}>{item.description}</Text>
           <View style={{ gap: 10, flexDirection: "row", justifyContent: "center" }}>
             <AnimatedButton style={{ backgroundColor: "blue" }} text="Buy Now" onPress={async () => {
-              const { data: insertData, error } = await supabase.from("cart_items").insert({ item_id: id, count: 1 })
+
+              const { data: insertData, error } = await supabase.from("cart_items").insert({ user_id: userProfile?.id, item_id: id, count: 1 })
               if (error) {
                 alert(`error adding to cart:\n${error.message}`);
               }
